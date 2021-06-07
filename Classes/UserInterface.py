@@ -38,10 +38,16 @@ class UserInterface(object):
 
     def display(self, screen, jack):
         if jack.melee_charged:
+            self.charge_M_rect.x = jack.rect.x
+            self.charge_M_rect.y = jack.rect.y - self.charge_M_height * 2
             screen.blit_img_rect(self.charge_M_image, self.charge_M_rect)
 
         if jack.ranged_charged:
+            self.charge_R_rect.x = jack.rect.x + self.charge_R_width * 2
+            self.charge_R_rect.y = jack.rect.y - self.charge_R_height * 2
             screen.blit_img_rect(self.charge_R_image, self.charge_R_rect)
 
         if jack.dash_charged:
+            self.charge_D_rect.x = jack.rect.x + self.charge_D_width * 4
+            self.charge_D_rect.y = jack.rect.y - self.charge_D_height * 2
             screen.blit_img_rect(self.charge_D_image, self.charge_D_rect)

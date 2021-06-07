@@ -7,6 +7,8 @@ import pygame
 from Classes.Character import Character
 from Classes.Animation import Animation
 from Classes.Delay import Delay
+from Classes.Melee import Melee
+from Classes.ChargedMelee import ChargedMelee
 
 
 class JackLumber(Character):
@@ -14,59 +16,67 @@ class JackLumber(Character):
         super(JackLumber, self).__init__(w_settings, x, y, facing_left)
 
         # Apply constants from w_settings
-        self.width = self.w_settings.JackLumber_width
-        self.height = self.w_settings.JackLumber_height
-        self.x_vel = self.w_settings.JackLumber_x_vel
-        self.dash_vel = self.w_settings.JackLumber_dash_vel
+        self.width = self.w_settings.JL_width
+        self.height = self.w_settings.JL_height
+        self.x_vel = self.w_settings.JL_x_vel
+        self.dash_vel = self.w_settings.JL_dash_vel
 
         # Set up the image and rect
         if self.facing_left:
-            self.image = self.w_settings.JackLumber_left_image
+            self.image = self.w_settings.JL_left_image
         else:
-            self.image = self.w_settings.JackLumber_right_image
+            self.image = self.w_settings.JL_right_image
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
+
+        # Variable to contain his melee attack
+        self.melee = None
 
         # A variable to refresh the current time for use in animations and delays
         self.cur_time = 0
 
         # Set up animation handling
-        self.walk_left_anim = Animation(self.w_settings.JackLumber_walk_left_anim,
-                                        self.w_settings.JackLumber_walk_anim_size,
-                                        self.w_settings.JackLumber_walk_anim_rates)
-        self.walk_right_anim = Animation(self.w_settings.JackLumber_walk_right_anim,
-                                         self.w_settings.JackLumber_walk_anim_size,
-                                         self.w_settings.JackLumber_walk_anim_rates)
-        self.dash_stage_1_left_anim = Animation(self.w_settings.JackLumber_dash_start_left_anim,
-                                                self.w_settings.JackLumber_dash_start_anim_size,
-                                                self.w_settings.JackLumber_dash_start_anim_rates)
-        self.dash_stage_1_right_anim = Animation(self.w_settings.JackLumber_dash_start_right_anim,
-                                                 self.w_settings.JackLumber_dash_start_anim_size,
-                                                 self.w_settings.JackLumber_dash_start_anim_rates)
-        self.invincidash_stage_2_left_anim = Animation(self.w_settings.JackLumber_invincidash_stage_2_left_anim,
-                                                       self.w_settings.JackLumber_invincidash_stage_2_anim_size,
-                                                       self.w_settings.JackLumber_invincidash_stage_2_anim_rates)
-        self.invincidash_stage_2_right_anim = Animation(self.w_settings.JackLumber_invincidash_stage_2_right_anim,
-                                                       self.w_settings.JackLumber_invincidash_stage_2_anim_size,
-                                                       self.w_settings.JackLumber_invincidash_stage_2_anim_rates)
-        self.invincidash_left_anim = Animation(self.w_settings.JackLumber_invincidash_left_anim,
-                                               self.w_settings.JackLumber_invincidash_anim_size,
-                                               self.w_settings.JackLumber_invincidash_anim_rates)
-        self.invincidash_right_anim = Animation(self.w_settings.JackLumber_invincidash_right_anim,
-                                               self.w_settings.JackLumber_invincidash_anim_size,
-                                               self.w_settings.JackLumber_invincidash_anim_rates)
+        self.walk_left_anim = Animation(self.w_settings.JL_walk_left_anim,
+                                        self.w_settings.JL_walk_anim_size,
+                                        self.w_settings.JL_walk_anim_rates)
+        self.walk_right_anim = Animation(self.w_settings.JL_walk_right_anim,
+                                         self.w_settings.JL_walk_anim_size,
+                                         self.w_settings.JL_walk_anim_rates)
+        self.dash_stage_1_left_anim = Animation(self.w_settings.JL_dash_start_left_anim,
+                                                self.w_settings.JL_dash_start_anim_size,
+                                                self.w_settings.JL_dash_start_anim_rates)
+        self.dash_stage_1_right_anim = Animation(self.w_settings.JL_dash_start_right_anim,
+                                                 self.w_settings.JL_dash_start_anim_size,
+                                                 self.w_settings.JL_dash_start_anim_rates)
+        self.invincidash_stage_2_left_anim = Animation(self.w_settings.JL_invincidash_stage_2_left_anim,
+                                                       self.w_settings.JL_invincidash_stage_2_anim_size,
+                                                       self.w_settings.JL_invincidash_stage_2_anim_rates)
+        self.invincidash_stage_2_right_anim = Animation(self.w_settings.JL_invincidash_stage_2_right_anim,
+                                                        self.w_settings.JL_invincidash_stage_2_anim_size,
+                                                        self.w_settings.JL_invincidash_stage_2_anim_rates)
+        self.invincidash_left_anim = Animation(self.w_settings.JL_invincidash_left_anim,
+                                               self.w_settings.JL_invincidash_anim_size,
+                                               self.w_settings.JL_invincidash_anim_rates)
+        self.invincidash_right_anim = Animation(self.w_settings.JL_invincidash_right_anim,
+                                                self.w_settings.JL_invincidash_anim_size,
+                                                self.w_settings.JL_invincidash_anim_rates)
         self.cur_anim = self.walk_left_anim
 
         # Set up various delays
-        self.damage_reaction_delay = Delay(self.w_settings.JackLumber_damage_reaction_period)
-        self.damaged_invinc_delay = Delay(self.w_settings.JackLumber_damaged_invinc_period)
-        self.dash_stage_1_delay = Delay(self.w_settings.JackLumber_dash_stage_1_period)
-        self.dash_stage_2_delay = Delay(self.w_settings.JackLumber_dash_stage_2_period)
-        self.dashing_delay = Delay(self.w_settings.JackLumber_dashing_period)
-        self.cur_delay = Delay(0)
+        self.damage_reaction_delay = Delay(self.w_settings.JL_damage_reaction_period)
+        self.damaged_invinc_delay = Delay(self.w_settings.JL_damaged_invinc_period)
+        self.dash_stage_1_delay = Delay(self.w_settings.JL_dash_stage_1_period)
+        self.dash_stage_2_delay = Delay(self.w_settings.JL_dash_stage_2_period)
+        self.dashing_delay = Delay(self.w_settings.JL_dashing_period)
+        self.cur_delay = None
 
-        self.M_delay = Delay(self.w_settings.JackLumber_charge_M_period)
-        self.R_delay = Delay(self.w_settings.JackLumber_charge_R_period)
-        self.D_delay = Delay(self.w_settings.JackLumber_charge_D_period)
+        self.melee_delay = Delay(self.w_settings.JL_melee_period)
+        self.melee_life_delay = Delay(self.w_settings.JL_melee_life_period)
+        self.ranged_delay = Delay(self.w_settings.JL_ranged_period)
+        self.attack_delay = None
+
+        self.M_delay = Delay(self.w_settings.JL_charge_M_period)
+        self.R_delay = Delay(self.w_settings.JL_charge_R_period)
+        self.D_delay = Delay(self.w_settings.JL_charge_D_period)
 
         # Set up bools to keep track of what controls are being used
         self.left_pressed = False
@@ -85,6 +95,7 @@ class JackLumber(Character):
         self.dashing_up = False
         self.dashing_down = False
         self.jump_pressed_once = False
+        self.jumping = False
         self.dash_ready = False
         self.being_damaged = False
         self.melee_attacking = False
@@ -116,23 +127,27 @@ class JackLumber(Character):
     def invincidash(self, dash_pressed):
         self.dash_pressed = dash_pressed
 
-    # Here we sort out most of our bools based on input from the user and restrictions from delays
+    """
+    Determining the characters state 
+    Here we sort out most of our bools based on input from the user and restrictions from delays
+    """
     def determine_state(self, cur_time):
         # Update the current time
         self.cur_time = cur_time
         # Check if Jack has fully charged any of his abilities
+        # Melee charge up
         if self.M_delay.is_active(self.cur_time):
             self.melee_charged = False
         else:
             self.M_delay.reset()
             self.melee_charged = True
-
+        # Ranged charge up
         if self.R_delay.is_active(self.cur_time):
             self.ranged_charged = False
         else:
             self.R_delay.reset()
             self.ranged_charged = True
-
+        # Dash charge up
         if self.dash_stage_1 or self.dash_stage_2 or self.dashing:
             self.D_delay.reset()
             self.dash_charged = False
@@ -142,54 +157,44 @@ class JackLumber(Character):
             self.D_delay.reset()
             self.dash_charged = True
 
-        # if we are in a state of delay from either being damaged, dash_stage_1, dash_stage_2, or dashing
-        if self.cur_delay.is_active(self.cur_time):
+        # if we are in a state of delay from either being damaged, dash_stage_1, dash_stage_2, dashing,
+        # attacking with melee, or attacking with ranged.
+        if self.cur_delay_is_active():
+            # If attacking, allow regular movement
+            if self.cur_delay == self.melee_delay or self.cur_delay == self.ranged_delay:
+                self.set_regular_movement_states()
             # Cancel delay if in dash stage 1 or 2 and we release the dash button
-            if self.dash_stage_1 and not self.dash_pressed:
+            if (self.dash_stage_1 or self.dash_stage_2) and not self.dash_pressed:
+                self.reset_cur_delay()
                 self.dash_stage_1 = False
-                self.cur_delay.reset()
-                self.dash_consumed = False
-                self.D_delay.begin(self.cur_time)
-            elif self.dash_stage_2 and not self.dash_pressed:
                 self.dash_stage_2 = False
-                self.cur_delay.reset()
                 self.dash_consumed = False
                 self.D_delay.begin(self.cur_time)
             # Cancel delay and immediately enter last stage of dash
-            elif self.dash_stage_2 and self.up_pressed:
+            elif self.dash_stage_2 and (self.up_pressed or self.down_pressed or self.left_pressed or self.right_pressed):
+                self.reset_cur_delay()
                 self.dash_stage_2 = False
                 self.dashing = True
-                self.dashing_up = True
-                self.cur_delay.reset()
                 self.cur_delay = self.dashing_delay
                 self.cur_delay.begin(self.cur_time)
-            elif self.dash_stage_2 and self.down_pressed:
-                self.dash_stage_2 = False
-                self.dashing = True
-                self.dashing_down = True
-                self.cur_delay.reset()
-                self.cur_delay = self.dashing_delay
-                self.cur_delay.begin(self.cur_time)
-            elif self.dash_stage_2 and self.left_pressed:
-                self.dash_stage_2 = False
-                self.dashing = True
-                self.dashing_x = True
-                self.facing_left = True
-                self.cur_delay.reset()
-                self.cur_delay = self.dashing_delay
-                self.cur_delay.begin(self.cur_time)
-            elif self.dash_stage_2 and self.right_pressed:
-                self.dash_stage_2 = False
-                self.dashing = True
-                self.dashing_x = True
-                self.facing_left = False
-                self.cur_delay.reset()
-                self.cur_delay = self.dashing_delay
-                self.cur_delay.begin(self.cur_time)
+                if self.up_pressed:
+                    self.dashing_up = True
+                elif self.down_pressed:
+                    self.dashing_down = True
+                elif self.left_pressed:
+                    self.dashing_x = True
+                    self.facing_left = True
+                elif self.right_pressed:
+                    self.dashing_x = True
+                    self.facing_left = False
+
         else:  # Delay has run out or is inactive
+            if self.cur_delay == self.melee_delay:
+                self.reset_cur_delay()
+                del self.melee
             # Shift from dash stage 1 to dash stage 2
             if self.dash_stage_1:
-                self.cur_delay.reset()
+                self.reset_cur_delay()
                 self.dash_stage_1 = False
                 self.dash_stage_2 = True
                 if self.dash_consumed:
@@ -198,7 +203,7 @@ class JackLumber(Character):
                 self.cur_delay.begin(self.cur_time)
             # Exit dash stage 2
             elif self.dash_stage_2:
-                self.cur_delay.reset()
+                self.reset_cur_delay()
                 self.dash_stage_2 = False
                 if self.dash_consumed:
                     self.invincible = False
@@ -206,8 +211,7 @@ class JackLumber(Character):
                 self.D_delay.begin(self.cur_time)
             # Exit dashing
             elif self.dashing:
-                self.cur_delay.reset()
-                self.cur_delay = Delay(0)
+                self.reset_cur_delay()
                 if self.dash_consumed:
                     self.invincible = False
                     self.dash_consumed = False
@@ -226,53 +230,102 @@ class JackLumber(Character):
                 self.cur_delay.begin(self.cur_time)
                 self.dash_stage_1 = True
                 self.moving_x = False
-            else:  # Regular movement allowed
-                if self.left_pressed and not self.right_pressed:
-                    self.moving_x = True
-                    self.facing_left = True
-                elif self.right_pressed and not self.left_pressed:
-                    self.moving_x = True
-                    self.facing_left = False
-                else:
-                    self.moving_x = False
-                # Jump
-                if self.jump_pressed and self.grounded:
-                    if not self.jump_pressed_once:
-                        self.jump_pressed_once = True
-                        self.y_velocity = self.w_settings.JackLumber_init_jump_vel
-                elif not self.jump_pressed:  # Must release the jump button at least once before attempting to jump again
-                    self.jump_pressed_once = False
+            else:  # Regular movement allowed, and attacks are allowed
+                self.set_regular_movement_states()
+                # Melee
+                if self.melee_pressed:
+                    if self.melee_charged:
+                        self.melee = ChargedMelee(self.w_settings, self.rect, self.facing_left)
+                    else:
+                        self.melee = Melee(self.w_settings, self.rect, self.facing_left)
+                    self.M_delay.reset()
+                    self.M_delay.begin(self.cur_time)
+                    self.cur_delay = self.melee_delay
+                    self.cur_delay.begin(self.cur_time)
+                # Ranged
+                elif self.ranged_pressed:
+                    pass
 
-    # Update position
+    # Helper function to reset the cur_delay to None
+    def reset_cur_delay(self):
+        self.cur_delay.reset()
+        del self.cur_delay
+        self.cur_delay = None
+
+    # Helper function to check if the cur_delay variable is active
+    def cur_delay_is_active(self):
+        if self.cur_delay is not None:
+            if self.cur_delay.is_active(self.cur_time):
+                return True
+        return False
+
+    # determine states helper function for normal movement
+    def set_regular_movement_states(self):
+        # Move left
+        if self.left_pressed and not self.right_pressed:
+            self.moving_x = True
+            self.facing_left = True
+        # Move right
+        elif self.right_pressed and not self.left_pressed:
+            self.moving_x = True
+            self.facing_left = False
+        # Don't move left or right
+        else:
+            self.moving_x = False
+        # Jump
+        # Jumping set to false when landing on a surface (check the on_top_of_surface function below)
+        if self.jump_pressed:
+            if not self.jump_pressed_once:  # This prevents repetitive jumping from holding down the jump button
+                self.jump_pressed_once = True
+                self.jumping = True
+        elif not self.jump_pressed:
+            self.jumping = False
+            self.jump_pressed_once = False
+
+    """ Character movement """
     def update_pos(self):
         """
         if self.being_damaged:
             self.moving_x = False
         """
+        # Beginning a dash
         if self.dash_stage_1:
             self.y_velocity = 0
+        # Dash stage 2
         elif self.dash_stage_2:
             self.y_velocity = 0
+        # Dashing in some direction
         elif self.dashing:
+            # Dashing up
             if self.dashing_up:
                 self.y += self.dash_vel * -1
                 self.y_velocity = self.dash_vel * -1
+            # Dashing down
             elif self.dashing_down:
                 self.y += self.dash_vel
                 self.y_velocity = self.dash_vel
             elif self.dashing_x:
+                # Dashing left
                 if self.facing_left:
                     self.x += self.dash_vel * -1
                     self.y_velocity = 0
+                # Dashing right
                 else:
                     self.x += self.dash_vel
                     self.y_velocity = 0
-        else:
+        else:  # Regular Movement
+            # Moving left
             if self.moving_x and self.facing_left:
                 self.x += self.x_vel * -1
+            # Moving right
             elif self.moving_x and not self.facing_left:
                 self.x += self.x_vel
-
+            # Jump
+            if self.jumping and self.grounded:
+                self.y_velocity = self.w_settings.JL_init_jump_vel
+            # Jump cancel
+            elif not self.jumping and self.y_velocity < 0:
+                self.y_velocity = 0
             # Apply y axis acceleration and speed
             self.y_velocity += self.w_settings.fall_acceleration
             self.y += self.y_velocity
@@ -280,6 +333,47 @@ class JackLumber(Character):
         self.rect.x = int(self.x)
         self.rect.y = int(self.y)
 
+    def check_surface_collisions(self, surfaces):
+        super(JackLumber, self).check_surface_collisions(surfaces)
+        # Move melee attack with Jack Lumber
+        if self.cur_delay == self.melee_delay:
+            self.melee.reposition(self.rect, self.facing_left)
+
+    # Addition to limit dash to once per jump (infinite while on the ground)
+    def on_top_of_surface(self, surface):
+        super(JackLumber, self).on_top_of_surface(surface)
+        self.dash_ready = True
+        self.jumping = False
+        self.dash_to_surface_reset()
+
+    # Bonk the bottom of a surface, kill upwards momentum
+    def below_surface(self, surface):
+        super(JackLumber, self).below_surface(surface)
+        self.dash_to_surface_reset()
+
+    def left_of_surface(self, surface):
+        super(JackLumber, self).left_of_surface(surface)
+        self.dash_to_surface_reset()
+
+    def right_of_surface(self, surface):
+        super(JackLumber, self).right_of_surface(surface)
+        self.dash_to_surface_reset()
+
+    # Cancel dash when dashing into a surface
+    def dash_to_surface_reset(self):
+        if self.cur_delay == self.dashing_delay:
+            self.reset_cur_delay()
+            self.dashing = False
+            self.dashing_x = False
+            self.dashing_up = False
+            self.dashing_down = False
+            self.y_velocity = 0
+            if self.dash_consumed:
+                self.invincible = False
+                self.dash_consumed = False
+            self.D_delay.begin(self.cur_time)
+
+    """ Animations """
     def update_animation(self):
         # Dash stage 1
         if self.dash_stage_1:
@@ -302,7 +396,7 @@ class JackLumber(Character):
                         self.cur_anim = self.invincidash_stage_2_left_anim
                     self.image = self.cur_anim.play(self.cur_time)
                 else:
-                    self.image = self.w_settings.JackLumber_dash_stage_2_left_image
+                    self.image = self.w_settings.JL_dash_stage_2_left_image
             elif not self.facing_left:
                 if self.dash_consumed:
                     if self.cur_anim != self.invincidash_stage_2_right_anim:
@@ -310,7 +404,7 @@ class JackLumber(Character):
                         self.cur_anim = self.invincidash_stage_2_right_anim
                     self.image = self.cur_anim.play(self.cur_time)
                 else:
-                    self.image = self.w_settings.JackLumber_dash_stage_2_right_image
+                    self.image = self.w_settings.JL_dash_stage_2_right_image
         # Invincidash
         elif self.dashing and self.dash_consumed:
             if self.facing_left:
@@ -339,74 +433,20 @@ class JackLumber(Character):
             self.cur_anim.reset()
             # In the air
             if self.facing_left and not self.grounded:
-                self.image = self.w_settings.JackLumber_jump_left_image
+                self.image = self.w_settings.JL_jump_left_image
             elif not self.grounded:
-                self.image = self.w_settings.JackLumber_jump_right_image
+                self.image = self.w_settings.JL_jump_right_image
             # Standing still
             elif self.facing_left:
-                self.image = self.w_settings.JackLumber_left_image
+                self.image = self.w_settings.JL_left_image
             else:
-                self.image = self.w_settings.JackLumber_right_image
+                self.image = self.w_settings.JL_right_image
 
-    # Addition to limit dash to once per jump (infinite while on the ground)
-    def on_top_of_surface(self, surface):
-        super(JackLumber, self).on_top_of_surface(surface)
-        self.dash_ready = True
-        if self.cur_delay == self.dashing_delay:
-            self.cur_delay.reset()
-            self.cur_delay = Delay(0)
-            self.dashing = False
-            self.dashing_x = False
-            self.dashing_up = False
-            self.dashing_down = False
-            self.y_velocity = 0
-            if self.dash_consumed:
-                self.invincible = False
-                self.dash_consumed = False
-            self.D_delay.begin(self.cur_time)
+        # Melee attack
+        if self.cur_delay == self.melee_delay:
+            self.melee.update_anim(self.cur_time)
 
-    # Bonk the bottom of a surface, kill upwards momentum
-    def below_surface(self, surface):
-        super(JackLumber, self).below_surface(surface)
-        if self.cur_delay == self.dashing_delay:
-            self.cur_delay.reset()
-            self.cur_delay = Delay(0)
-            self.dashing = False
-            self.dashing_x = False
-            self.dashing_up = False
-            self.dashing_down = False
-            self.y_velocity = 0
-            if self.dash_consumed:
-                self.invincible = False
-                self.dash_consumed = False
-            self.D_delay.begin(self.cur_time)
-
-    def left_of_surface(self, surface):
-        super(JackLumber, self).left_of_surface(surface)
-        if self.cur_delay == self.dashing_delay:
-            self.cur_delay.reset()
-            self.cur_delay = Delay(0)
-            self.dashing = False
-            self.dashing_x = False
-            self.dashing_up = False
-            self.dashing_down = False
-            self.y_velocity = 0
-            if self.dash_consumed:
-                self.invincible = False
-                self.dash_consumed = False
-            self.D_delay.begin(self.cur_time)
-
-    def right_of_surface(self, surface):
-        super(JackLumber, self).right_of_surface(surface)
-        if self.cur_delay == self.dashing_delay:
-            self.cur_delay.reset()
-            self.cur_delay = Delay(0)
-            self.dashing = False
-            self.dashing_x = False
-            self.dashing_up = False
-            self.dashing_down = False
-            self.y_velocity = 0
-            if self.dash_consumed:
-                self.invincible = False
-                self.dash_consumed = False
-            self.D_delay.begin(self.cur_time)
+    def blit_me(self, screen):
+        screen.blit_obj(self)
+        if self.cur_delay == self.melee_delay:
+            screen.blit_obj(self.melee)

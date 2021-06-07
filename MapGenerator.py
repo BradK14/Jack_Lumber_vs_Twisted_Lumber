@@ -10,14 +10,14 @@ from Classes.BackgroundBlock import BackgroundBlock
 from Classes.Surface import Surface
 
 
-# Helper functions
+""" Helper functions """
 def create_bg_blocks(w_settings, bg_blocks, x, y, width, height):
     for w in range(width):
         for h in range(height):
             bg_blocks.add(BackgroundBlock(w_settings, x + (w * w_settings.BackgroundBlock_width), y + (h * w_settings.BackgroundBlock_height)))
 
 
-# Maps
+""" Maps """
 # Map 1
 def load_map(w_settings, bg_blocks, surfaces, jack):
     # Background

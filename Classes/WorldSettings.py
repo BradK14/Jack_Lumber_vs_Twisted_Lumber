@@ -9,35 +9,35 @@ import pygame
 
 class WorldSettings(object):
     def __init__(self):
-        """Screen size"""
+        """ Screen size """
         self.screen_width = 1920
         self.screen_height = 1080
 
-        """Frames per second"""
+        """ Frames per second """
         self.fps = 60
         self.fps_t = 16 + (2 / 3)  # fps translated to pygame ticks
 
-        """Sizes of everything"""
+        """ Sizes of everything """
         # buom stands for the basic unit of measurement used for the sizes of objects in this game
         self.buom = 32
 
         # Jack Lumber's size
-        self.JackLumber_width = self.buom * 2
-        self.JackLumber_height = self.JackLumber_width * 2
+        self.JL_width = self.buom * 2
+        self.JL_height = self.JL_width * 2
 
         # Jack Lumber attack sizes
-        self.JackLumber_melee_width = int(self.JackLumber_width / 2)
-        self.JackLumber_melee_height = self.JackLumber_height
-        self.JackLumber_charged_melee_width = int(self.JackLumber_melee_width * 1.5)
-        self.JackLumber_charged_melee_height = int(self.JackLumber_melee_height * 1.5)
+        self.JL_melee_width = self.JL_width * 2
+        self.JL_melee_height = self.JL_height
+        self.JL_charged_melee_width = int(self.JL_melee_width * 1.5)
+        self.JL_charged_melee_height = int(self.JL_melee_height * 1.5)
 
-        self.JackLumber_ranged_width = self.buom
-        self.JackLumber_ranged_height = self.JackLumber_ranged_width
-        self.JackLumber_charged_ranged_width = self.JackLumber_ranged_width * 2
-        self.JackLumber_charged_ranged_height = self.JackLumber_charged_ranged_width
+        self.JL_ranged_width = self.buom
+        self.JL_ranged_height = self.JL_ranged_width
+        self.JL_charged_ranged_width = self.JL_ranged_width * 2
+        self.JL_charged_ranged_height = self.JL_charged_ranged_width
 
         # Jack Lumber's charge state indicator sizes
-        self.charge_M_width = self.buom
+        self.charge_M_width = int(self.buom / 2)
         self.charge_M_height = self.charge_M_width
         self.charge_R_width = self.charge_M_width
         self.charge_R_height = self.charge_M_width
@@ -52,13 +52,13 @@ class WorldSettings(object):
         self.BackgroundBlock_width = self.buom
         self.BackgroundBlock_height = self.BackgroundBlock_width
 
-        """Load non-animated images"""
-        self.JackLumber_left_image = pygame.transform.scale(pygame.image.load('Images/Jack Lumber.png'), (self.JackLumber_width, self.JackLumber_height))
-        self.JackLumber_right_image = pygame.transform.flip(self.JackLumber_left_image, True, False)
-        self.JackLumber_jump_left_image = pygame.transform.scale(pygame.image.load('Images/Jack Lumber Jump.png'), (self.JackLumber_width, self.JackLumber_height))
-        self.JackLumber_jump_right_image = pygame.transform.flip(self.JackLumber_jump_left_image, True, False)
-        self.JackLumber_dash_stage_2_left_image = pygame.transform.scale(pygame.image.load('Images/Jack Lumber invincidash-4.png'), (self.JackLumber_width, self.JackLumber_height))
-        self.JackLumber_dash_stage_2_right_image = pygame.transform.flip(self.JackLumber_dash_stage_2_left_image, True, False)
+        """ Load non-animated images """
+        self.JL_left_image = pygame.transform.scale(pygame.image.load('Images/Jack Lumber.png'), (self.JL_width, self.JL_height))
+        self.JL_right_image = pygame.transform.flip(self.JL_left_image, True, False)
+        self.JL_jump_left_image = pygame.transform.scale(pygame.image.load('Images/Jack Lumber Jump.png'), (self.JL_width, self.JL_height))
+        self.JL_jump_right_image = pygame.transform.flip(self.JL_jump_left_image, True, False)
+        self.JL_dash_stage_2_left_image = pygame.transform.scale(pygame.image.load('Images/Jack Lumber invincidash-4.png'), (self.JL_width, self.JL_height))
+        self.JL_dash_stage_2_right_image = pygame.transform.flip(self.JL_dash_stage_2_left_image, True, False)
 
         self.charge_M_image = pygame.transform.scale(pygame.image.load('Images/Charge Display-M.png'), (self.charge_M_width, self.charge_M_height))
         self.charge_R_image = pygame.transform.scale(pygame.image.load('Images/Charge Display-R.png'), (self.charge_R_width, self.charge_R_height))
@@ -68,206 +68,213 @@ class WorldSettings(object):
 
         self.BackgroundBlock_image = pygame.transform.scale(pygame.image.load('Images/Background Block.png'), (self.BackgroundBlock_width, self.BackgroundBlock_height))
 
-        """Animations (variables for animation sizes just below animation lists)"""
+        """ Animations (variables for animation sizes just below animation lists) """
         # Jack Lumber walk animation
-        self.JackLumber_walk_left_anim = (pygame.transform.scale(pygame.image.load('Images/Jack Lumber Walking-1.png'),
-                                                                 (self.JackLumber_width, self.JackLumber_height)),
-                                          pygame.transform.scale(pygame.image.load('Images/Jack Lumber Walking-2.png'),
-                                                                 (self.JackLumber_width, self.JackLumber_height)),
-                                          pygame.transform.scale(pygame.image.load('Images/Jack Lumber Walking-3.png'),
-                                                                 (self.JackLumber_width, self.JackLumber_height)),
-                                          pygame.transform.scale(pygame.image.load('Images/Jack Lumber Walking-4.png'),
-                                                                 (self.JackLumber_width, self.JackLumber_height)),
-                                          pygame.transform.scale(pygame.image.load('Images/Jack Lumber Walking-5.png'),
-                                                                 (self.JackLumber_width, self.JackLumber_height)))
-        self.JackLumber_walk_right_anim = (pygame.transform.flip(self.JackLumber_walk_left_anim[0], True, False),
-                                           pygame.transform.flip(self.JackLumber_walk_left_anim[1], True, False),
-                                           pygame.transform.flip(self.JackLumber_walk_left_anim[2], True, False),
-                                           pygame.transform.flip(self.JackLumber_walk_left_anim[3], True, False),
-                                           pygame.transform.flip(self.JackLumber_walk_left_anim[4], True, False))
-        self.JackLumber_walk_anim_size = 5
-        self.JackLumber_walk_anim_rates = (90, 90, 90, 90, 90)
+        self.JL_walk_left_anim = (pygame.transform.scale(pygame.image.load('Images/Jack Lumber Walking-1.png'),
+                                                         (self.JL_width, self.JL_height)),
+                                  pygame.transform.scale(pygame.image.load('Images/Jack Lumber Walking-2.png'),
+                                                                 (self.JL_width, self.JL_height)),
+                                  pygame.transform.scale(pygame.image.load('Images/Jack Lumber Walking-3.png'),
+                                                                 (self.JL_width, self.JL_height)),
+                                  pygame.transform.scale(pygame.image.load('Images/Jack Lumber Walking-4.png'),
+                                                                 (self.JL_width, self.JL_height)),
+                                  pygame.transform.scale(pygame.image.load('Images/Jack Lumber Walking-5.png'),
+                                                                 (self.JL_width, self.JL_height)))
+        self.JL_walk_right_anim = (pygame.transform.flip(self.JL_walk_left_anim[0], True, False),
+                                   pygame.transform.flip(self.JL_walk_left_anim[1], True, False),
+                                   pygame.transform.flip(self.JL_walk_left_anim[2], True, False),
+                                   pygame.transform.flip(self.JL_walk_left_anim[3], True, False),
+                                   pygame.transform.flip(self.JL_walk_left_anim[4], True, False))
+        self.JL_walk_anim_size = 5
+        self.JL_walk_anim_rates = (90, 90, 90, 90, 90)
 
         # Jack Lumber dash stage 1 animation
-        self.JackLumber_dash_start_left_anim = (pygame.transform.scale(pygame.image.load('Images/Jack Lumber invincidash-1.png'),
-                                                                       (self.JackLumber_width, self.JackLumber_height)),
-                                                pygame.transform.scale(pygame.image.load('Images/Jack Lumber invincidash-2.png'),
-                                                                       (self.JackLumber_width, self.JackLumber_height)),
-                                                pygame.transform.scale(pygame.image.load('Images/Jack Lumber invincidash-3.png'),
-                                                                       (self.JackLumber_width, self.JackLumber_height)))
-        self.JackLumber_dash_start_right_anim = (pygame.transform.flip(self.JackLumber_dash_start_left_anim[0], True, False),
-                                                 pygame.transform.flip(self.JackLumber_dash_start_left_anim[1], True, False),
-                                                 pygame.transform.flip(self.JackLumber_dash_start_left_anim[2], True, False))
-        self.JackLumber_dash_start_anim_size = 3
-        self.JackLumber_dash_start_anim_rates = (75, 75, 150)
+        self.JL_dash_start_left_anim = (pygame.transform.scale(pygame.image.load('Images/Jack Lumber invincidash-1.png'),
+                                                               (self.JL_width, self.JL_height)),
+                                        pygame.transform.scale(pygame.image.load('Images/Jack Lumber invincidash-2.png'),
+                                                                       (self.JL_width, self.JL_height)),
+                                        pygame.transform.scale(pygame.image.load('Images/Jack Lumber invincidash-3.png'),
+                                                                       (self.JL_width, self.JL_height)))
+        self.JL_dash_start_right_anim = (pygame.transform.flip(self.JL_dash_start_left_anim[0], True, False),
+                                         pygame.transform.flip(self.JL_dash_start_left_anim[1], True, False),
+                                         pygame.transform.flip(self.JL_dash_start_left_anim[2], True, False))
+        self.JL_dash_start_anim_size = 3
+        self.JL_dash_start_anim_rates = (75, 75, 150)
 
         # Jack Lumber invincidash stage 2 animation
-        self.JackLumber_invincidash_stage_2_left_anim = (pygame.transform.scale(pygame.image.load('Images/Jack Lumber invincidash-5.png'),
-                                                                                (self.JackLumber_width, self.JackLumber_height)),
-                                                         pygame.transform.scale(pygame.image.load('Images/Jack Lumber invincidash-6.png'),
-                                                                                (self.JackLumber_width, self.JackLumber_height)))
-        self.JackLumber_invincidash_stage_2_right_anim = (pygame.transform.flip(self.JackLumber_invincidash_stage_2_left_anim[0], True, False),
-                                                          pygame.transform.flip(self.JackLumber_invincidash_stage_2_left_anim[1], True, False))
-        self.JackLumber_invincidash_stage_2_anim_size = 2
-        self.JackLumber_invincidash_stage_2_anim_rates = (90, 90)
+        self.JL_invincidash_stage_2_left_anim = (pygame.transform.scale(pygame.image.load('Images/Jack Lumber invincidash-5.png'),
+                                                                        (self.JL_width, self.JL_height)),
+                                                 pygame.transform.scale(pygame.image.load('Images/Jack Lumber invincidash-6.png'),
+                                                                                (self.JL_width, self.JL_height)))
+        self.JL_invincidash_stage_2_right_anim = (pygame.transform.flip(self.JL_invincidash_stage_2_left_anim[0], True, False),
+                                                  pygame.transform.flip(self.JL_invincidash_stage_2_left_anim[1], True, False))
+        self.JL_invincidash_stage_2_anim_size = 2
+        self.JL_invincidash_stage_2_anim_rates = (90, 90)
 
         # Jack Lumber final invincidash animation
-        self.JackLumber_invincidash_left_anim = (pygame.transform.scale(pygame.image.load('Images/Jack Lumber Invincijump-1.png'),
-                                                                        (self.JackLumber_width, self.JackLumber_height)),
-                                                 pygame.transform.scale(pygame.image.load('Images/Jack Lumber Invincijump-2.png'),
-                                                                        (self.JackLumber_width, self.JackLumber_height)))
-        self.JackLumber_invincidash_right_anim = (pygame.transform.flip(self.JackLumber_invincidash_left_anim[0], True, False),
-                                                  pygame.transform.flip(self.JackLumber_invincidash_left_anim[1], True, False))
-        self.JackLumber_invincidash_anim_size = 2
-        self.JackLumber_invincidash_anim_rates = (90, 90)
+        self.JL_invincidash_left_anim = (pygame.transform.scale(pygame.image.load('Images/Jack Lumber Invincijump-1.png'),
+                                                                (self.JL_width, self.JL_height)),
+                                         pygame.transform.scale(pygame.image.load('Images/Jack Lumber Invincijump-2.png'),
+                                                                        (self.JL_width, self.JL_height)))
+        self.JL_invincidash_right_anim = (pygame.transform.flip(self.JL_invincidash_left_anim[0], True, False),
+                                          pygame.transform.flip(self.JL_invincidash_left_anim[1], True, False))
+        self.JL_invincidash_anim_size = 2
+        self.JL_invincidash_anim_rates = (90, 90)
 
         # Jack Lumber's melee and charged melee attack animations
-        self.JackLumber_melee_right_anim = (pygame.transform.scale(pygame.image.load('Images/Jack Lumber Melee-1.png'),
-                                                                   (self.JackLumber_melee_width,
-                                                                    self.JackLumber_melee_height)),
-                                            pygame.transform.scale(pygame.image.load('Images/Jack Lumber Melee-2.png'),
-                                                                   (self.JackLumber_melee_width,
-                                                                    self.JackLumber_melee_height)),
-                                            pygame.transform.scale(pygame.image.load('Images/Jack Lumber Melee-3.png'),
-                                                                   (self.JackLumber_melee_width,
-                                                                    self.JackLumber_melee_height)),
-                                            pygame.transform.scale(pygame.image.load('Images/Jack Lumber Melee-4.png'),
-                                                                   (self.JackLumber_melee_width,
-                                                                    self.JackLumber_melee_height)),
-                                            pygame.transform.scale(pygame.image.load('Images/Jack Lumber Melee-5.png'),
-                                                                   (self.JackLumber_melee_width,
-                                                                    self.JackLumber_melee_height)),
-                                            pygame.transform.scale(pygame.image.load('Images/Jack Lumber Melee-6.png'),
-                                                                   (self.JackLumber_melee_width,
-                                                                    self.JackLumber_melee_height)),
-                                            pygame.transform.scale(pygame.image.load('Images/Jack Lumber Melee-7.png'),
-                                                                   (self.JackLumber_melee_width,
-                                                                    self.JackLumber_melee_height)))
-        self.JackLumber_melee_left_anim = (pygame.transform.flip(self.JackLumber_melee_right_anim[0], True, False),
-                                           pygame.transform.flip(self.JackLumber_melee_right_anim[1], True, False),
-                                           pygame.transform.flip(self.JackLumber_melee_right_anim[2], True, False),
-                                           pygame.transform.flip(self.JackLumber_melee_right_anim[3], True, False),
-                                           pygame.transform.flip(self.JackLumber_melee_right_anim[4], True, False),
-                                           pygame.transform.flip(self.JackLumber_melee_right_anim[5], True, False),
-                                           pygame.transform.flip(self.JackLumber_melee_right_anim[6], True, False))
-        self.JackLumber_charged_melee_right_anim = (pygame.transform.scale(self.JackLumber_melee_right_anim[0],
-                                                                           (self.JackLumber_charged_melee_width,
-                                                                            self.JackLumber_charged_melee_height)),
-                                                    pygame.transform.scale(self.JackLumber_melee_right_anim[1],
-                                                                           (self.JackLumber_charged_melee_width,
-                                                                            self.JackLumber_charged_melee_height)),
-                                                    pygame.transform.scale(self.JackLumber_melee_right_anim[2],
-                                                                           (self.JackLumber_charged_melee_width,
-                                                                            self.JackLumber_charged_melee_height)),
-                                                    pygame.transform.scale(self.JackLumber_melee_right_anim[3],
-                                                                           (self.JackLumber_charged_melee_width,
-                                                                            self.JackLumber_charged_melee_height)),
-                                                    pygame.transform.scale(self.JackLumber_melee_right_anim[4],
-                                                                           (self.JackLumber_charged_melee_width,
-                                                                            self.JackLumber_charged_melee_height)),
-                                                    pygame.transform.scale(self.JackLumber_melee_right_anim[5],
-                                                                           (self.JackLumber_charged_melee_width,
-                                                                            self.JackLumber_charged_melee_height)),
-                                                    pygame.transform.scale(self.JackLumber_melee_right_anim[6],
-                                                                           (self.JackLumber_charged_melee_width,
-                                                                            self.JackLumber_charged_melee_height)))
-        self.JackLumber_charged_melee_left_anim = (pygame.transform.flip(self.JackLumber_charged_melee_right_anim[0], True, False),
-                                                   pygame.transform.flip(self.JackLumber_charged_melee_right_anim[1], True, False),
-                                                   pygame.transform.flip(self.JackLumber_charged_melee_right_anim[2], True, False),
-                                                   pygame.transform.flip(self.JackLumber_charged_melee_right_anim[3], True, False),
-                                                   pygame.transform.flip(self.JackLumber_charged_melee_right_anim[4], True, False),
-                                                   pygame.transform.flip(self.JackLumber_charged_melee_right_anim[5], True, False),
-                                                   pygame.transform.flip(self.JackLumber_charged_melee_right_anim[6], True, False))
-        self.JackLumber_melee_anim_size = 7
-        self.JackLumber_melee_anim_rates = (int(self.fps_t), int(self.fps_t), int(self.fps_t), int(self.fps_t),
-                                                 int(self.fps_t), int(self.fps_t), int(self.fps_t))
+        self.JL_melee_right_anim = (pygame.transform.scale(pygame.image.load('Images/Jack Lumber Melee-1.png'),
+                                                           (self.JL_melee_width,
+                                                                    self.JL_melee_height)),
+                                    pygame.transform.scale(pygame.image.load('Images/Jack Lumber Melee-2.png'),
+                                                                   (self.JL_melee_width,
+                                                                    self.JL_melee_height)),
+                                    pygame.transform.scale(pygame.image.load('Images/Jack Lumber Melee-3.png'),
+                                                                   (self.JL_melee_width,
+                                                                    self.JL_melee_height)),
+                                    pygame.transform.scale(pygame.image.load('Images/Jack Lumber Melee-4.png'),
+                                                                   (self.JL_melee_width,
+                                                                    self.JL_melee_height)),
+                                    pygame.transform.scale(pygame.image.load('Images/Jack Lumber Melee-5.png'),
+                                                                   (self.JL_melee_width,
+                                                                    self.JL_melee_height)),
+                                    pygame.transform.scale(pygame.image.load('Images/Jack Lumber Melee-6.png'),
+                                                                   (self.JL_melee_width,
+                                                                    self.JL_melee_height)),
+                                    pygame.transform.scale(pygame.image.load('Images/Jack Lumber Melee-7.png'),
+                                                                   (self.JL_melee_width,
+                                                                    self.JL_melee_height)))
+        self.JL_melee_left_anim = (pygame.transform.flip(self.JL_melee_right_anim[0], True, False),
+                                   pygame.transform.flip(self.JL_melee_right_anim[1], True, False),
+                                   pygame.transform.flip(self.JL_melee_right_anim[2], True, False),
+                                   pygame.transform.flip(self.JL_melee_right_anim[3], True, False),
+                                   pygame.transform.flip(self.JL_melee_right_anim[4], True, False),
+                                   pygame.transform.flip(self.JL_melee_right_anim[5], True, False),
+                                   pygame.transform.flip(self.JL_melee_right_anim[6], True, False))
+        self.JL_charged_melee_right_anim = (pygame.transform.scale(self.JL_melee_right_anim[0],
+                                                                   (self.JL_charged_melee_width,
+                                                                            self.JL_charged_melee_height)),
+                                            pygame.transform.scale(self.JL_melee_right_anim[1],
+                                                                           (self.JL_charged_melee_width,
+                                                                            self.JL_charged_melee_height)),
+                                            pygame.transform.scale(self.JL_melee_right_anim[2],
+                                                                           (self.JL_charged_melee_width,
+                                                                            self.JL_charged_melee_height)),
+                                            pygame.transform.scale(self.JL_melee_right_anim[3],
+                                                                           (self.JL_charged_melee_width,
+                                                                            self.JL_charged_melee_height)),
+                                            pygame.transform.scale(self.JL_melee_right_anim[4],
+                                                                           (self.JL_charged_melee_width,
+                                                                            self.JL_charged_melee_height)),
+                                            pygame.transform.scale(self.JL_melee_right_anim[5],
+                                                                           (self.JL_charged_melee_width,
+                                                                            self.JL_charged_melee_height)),
+                                            pygame.transform.scale(self.JL_melee_right_anim[6],
+                                                                           (self.JL_charged_melee_width,
+                                                                            self.JL_charged_melee_height)))
+        self.JL_charged_melee_left_anim = (pygame.transform.flip(self.JL_charged_melee_right_anim[0], True, False),
+                                           pygame.transform.flip(self.JL_charged_melee_right_anim[1], True, False),
+                                           pygame.transform.flip(self.JL_charged_melee_right_anim[2], True, False),
+                                           pygame.transform.flip(self.JL_charged_melee_right_anim[3], True, False),
+                                           pygame.transform.flip(self.JL_charged_melee_right_anim[4], True, False),
+                                           pygame.transform.flip(self.JL_charged_melee_right_anim[5], True, False),
+                                           pygame.transform.flip(self.JL_charged_melee_right_anim[6], True, False))
+        self.JL_melee_anim_size = 7
+        self.JL_melee_anim_rates = (int(self.fps_t), int(self.fps_t), int(self.fps_t), int(self.fps_t),
+                                    int(self.fps_t), int(self.fps_t), int(self.fps_t))
 
         # Jack Lumber's ranged and charged ranged attack animations
-        self.JackLumber_ranged_right_anim = (pygame.transform.scale(pygame.image.load('Images/Jack Lumber Ranged-1.png'),
-                                                                   (self.JackLumber_ranged_width,
-                                                                    self.JackLumber_ranged_height)),
-                                             pygame.transform.scale(pygame.image.load('Images/Jack Lumber Ranged-2.png'),
-                                                                    (self.JackLumber_ranged_width,
-                                                                     self.JackLumber_ranged_height)),
-                                             pygame.transform.scale(pygame.image.load('Images/Jack Lumber Ranged-3.png'),
-                                                                    (self.JackLumber_ranged_width,
-                                                                     self.JackLumber_ranged_height)),
-                                             pygame.transform.scale(pygame.image.load('Images/Jack Lumber Ranged-4.png'),
-                                                                    (self.JackLumber_ranged_width,
-                                                                     self.JackLumber_ranged_height)),
-                                             pygame.transform.scale(pygame.image.load('Images/Jack Lumber Ranged-5.png'),
-                                                                    (self.JackLumber_ranged_width,
-                                                                     self.JackLumber_ranged_height)),
-                                             pygame.transform.scale(pygame.image.load('Images/Jack Lumber Ranged-6.png'),
-                                                                    (self.JackLumber_ranged_width,
-                                                                     self.JackLumber_ranged_height)),
-                                             pygame.transform.scale(pygame.image.load('Images/Jack Lumber Ranged-7.png'),
-                                                                    (self.JackLumber_ranged_width,
-                                                                     self.JackLumber_ranged_height)),
-                                             pygame.transform.scale(pygame.image.load('Images/Jack Lumber Ranged-8.png'),
-                                                                    (self.JackLumber_ranged_width,
-                                                                     self.JackLumber_ranged_height)))
-        self.JackLumber_ranged_left_anim = (pygame.transform.flip(self.JackLumber_ranged_right_anim[0], True, False),
-                                            pygame.transform.flip(self.JackLumber_ranged_right_anim[1], True, False),
-                                            pygame.transform.flip(self.JackLumber_ranged_right_anim[2], True, False),
-                                            pygame.transform.flip(self.JackLumber_ranged_right_anim[3], True, False),
-                                            pygame.transform.flip(self.JackLumber_ranged_right_anim[4], True, False),
-                                            pygame.transform.flip(self.JackLumber_ranged_right_anim[5], True, False),
-                                            pygame.transform.flip(self.JackLumber_ranged_right_anim[6], True, False),
-                                            pygame.transform.flip(self.JackLumber_ranged_right_anim[7], True, False))
-        self.JackLumber_charged_ranged_right_anim = (pygame.transform.scale(self.JackLumber_ranged_right_anim[0],
-                                                                           (self.JackLumber_charged_ranged_width,
-                                                                            self.JackLumber_charged_ranged_height)),
-                                                     pygame.transform.scale(self.JackLumber_ranged_right_anim[1],
-                                                                           (self.JackLumber_charged_ranged_width,
-                                                                            self.JackLumber_charged_ranged_height)),
-                                                     pygame.transform.scale(self.JackLumber_ranged_right_anim[2],
-                                                                           (self.JackLumber_charged_ranged_width,
-                                                                            self.JackLumber_charged_ranged_height)),
-                                                     pygame.transform.scale(self.JackLumber_ranged_right_anim[3],
-                                                                           (self.JackLumber_charged_ranged_width,
-                                                                            self.JackLumber_charged_ranged_height)),
-                                                     pygame.transform.scale(self.JackLumber_ranged_right_anim[4],
-                                                                           (self.JackLumber_charged_ranged_width,
-                                                                            self.JackLumber_charged_ranged_height)),
-                                                     pygame.transform.scale(self.JackLumber_ranged_right_anim[5],
-                                                                           (self.JackLumber_charged_ranged_width,
-                                                                            self.JackLumber_charged_ranged_height)),
-                                                     pygame.transform.scale(self.JackLumber_ranged_right_anim[6],
-                                                                           (self.JackLumber_charged_ranged_width,
-                                                                            self.JackLumber_charged_ranged_height)),
-                                                     pygame.transform.scale(self.JackLumber_ranged_right_anim[7],
-                                                                           (self.JackLumber_charged_ranged_width,
-                                                                            self.JackLumber_charged_ranged_height)))
-        self.JackLumber_charged_left_anim = (pygame.transform.flip(self.JackLumber_charged_ranged_right_anim[0], True, False),
-                                             pygame.transform.flip(self.JackLumber_charged_ranged_right_anim[1], True, False),
-                                             pygame.transform.flip(self.JackLumber_charged_ranged_right_anim[2], True, False),
-                                             pygame.transform.flip(self.JackLumber_charged_ranged_right_anim[3], True, False),
-                                             pygame.transform.flip(self.JackLumber_charged_ranged_right_anim[4], True, False),
-                                             pygame.transform.flip(self.JackLumber_charged_ranged_right_anim[5], True, False),
-                                             pygame.transform.flip(self.JackLumber_charged_ranged_right_anim[6], True, False),
-                                             pygame.transform.flip(self.JackLumber_charged_ranged_right_anim[7], True, False))
-        self.JackLumber_ranged_anim_size = 8
-        self.JackLumber_melee_anim_rates = (int(self.fps_t), int(self.fps_t), int(self.fps_t), int(self.fps_t),
-                                                 int(self.fps_t), int(self.fps_t), int(self.fps_t), int(self.fps_t))
+        self.JL_ranged_right_anim = (pygame.transform.scale(pygame.image.load('Images/Jack Lumber Ranged-1.png'),
+                                                            (self.JL_ranged_width,
+                                                                    self.JL_ranged_height)),
+                                     pygame.transform.scale(pygame.image.load('Images/Jack Lumber Ranged-2.png'),
+                                                                    (self.JL_ranged_width,
+                                                                     self.JL_ranged_height)),
+                                     pygame.transform.scale(pygame.image.load('Images/Jack Lumber Ranged-3.png'),
+                                                                    (self.JL_ranged_width,
+                                                                     self.JL_ranged_height)),
+                                     pygame.transform.scale(pygame.image.load('Images/Jack Lumber Ranged-4.png'),
+                                                                    (self.JL_ranged_width,
+                                                                     self.JL_ranged_height)),
+                                     pygame.transform.scale(pygame.image.load('Images/Jack Lumber Ranged-5.png'),
+                                                                    (self.JL_ranged_width,
+                                                                     self.JL_ranged_height)),
+                                     pygame.transform.scale(pygame.image.load('Images/Jack Lumber Ranged-6.png'),
+                                                                    (self.JL_ranged_width,
+                                                                     self.JL_ranged_height)),
+                                     pygame.transform.scale(pygame.image.load('Images/Jack Lumber Ranged-7.png'),
+                                                                    (self.JL_ranged_width,
+                                                                     self.JL_ranged_height)),
+                                     pygame.transform.scale(pygame.image.load('Images/Jack Lumber Ranged-8.png'),
+                                                                    (self.JL_ranged_width,
+                                                                     self.JL_ranged_height)))
+        self.JL_ranged_left_anim = (pygame.transform.flip(self.JL_ranged_right_anim[0], True, False),
+                                    pygame.transform.flip(self.JL_ranged_right_anim[1], True, False),
+                                    pygame.transform.flip(self.JL_ranged_right_anim[2], True, False),
+                                    pygame.transform.flip(self.JL_ranged_right_anim[3], True, False),
+                                    pygame.transform.flip(self.JL_ranged_right_anim[4], True, False),
+                                    pygame.transform.flip(self.JL_ranged_right_anim[5], True, False),
+                                    pygame.transform.flip(self.JL_ranged_right_anim[6], True, False),
+                                    pygame.transform.flip(self.JL_ranged_right_anim[7], True, False))
+        self.JL_charged_ranged_right_anim = (pygame.transform.scale(self.JL_ranged_right_anim[0],
+                                                                    (self.JL_charged_ranged_width,
+                                                                            self.JL_charged_ranged_height)),
+                                             pygame.transform.scale(self.JL_ranged_right_anim[1],
+                                                                            (self.JL_charged_ranged_width,
+                                                                            self.JL_charged_ranged_height)),
+                                             pygame.transform.scale(self.JL_ranged_right_anim[2],
+                                                                            (self.JL_charged_ranged_width,
+                                                                            self.JL_charged_ranged_height)),
+                                             pygame.transform.scale(self.JL_ranged_right_anim[3],
+                                                                            (self.JL_charged_ranged_width,
+                                                                            self.JL_charged_ranged_height)),
+                                             pygame.transform.scale(self.JL_ranged_right_anim[4],
+                                                                            (self.JL_charged_ranged_width,
+                                                                            self.JL_charged_ranged_height)),
+                                             pygame.transform.scale(self.JL_ranged_right_anim[5],
+                                                                            (self.JL_charged_ranged_width,
+                                                                            self.JL_charged_ranged_height)),
+                                             pygame.transform.scale(self.JL_ranged_right_anim[6],
+                                                                            (self.JL_charged_ranged_width,
+                                                                            self.JL_charged_ranged_height)),
+                                             pygame.transform.scale(self.JL_ranged_right_anim[7],
+                                                                            (self.JL_charged_ranged_width,
+                                                                            self.JL_charged_ranged_height)))
+        self.JL_charged_ranged_left_anim = (pygame.transform.flip(self.JL_charged_ranged_right_anim[0], True, False),
+                                            pygame.transform.flip(self.JL_charged_ranged_right_anim[1], True, False),
+                                            pygame.transform.flip(self.JL_charged_ranged_right_anim[2], True, False),
+                                            pygame.transform.flip(self.JL_charged_ranged_right_anim[3], True, False),
+                                            pygame.transform.flip(self.JL_charged_ranged_right_anim[4], True, False),
+                                            pygame.transform.flip(self.JL_charged_ranged_right_anim[5], True, False),
+                                            pygame.transform.flip(self.JL_charged_ranged_right_anim[6], True, False),
+                                            pygame.transform.flip(self.JL_charged_ranged_right_anim[7], True, False))
+        self.JL_ranged_anim_size = 8
+        self.JL_ranged_anim_rates = (int(self.fps_t), int(self.fps_t), int(self.fps_t), int(self.fps_t),
+                                     int(self.fps_t), int(self.fps_t), int(self.fps_t), int(self.fps_t))
 
-        """Speeds of everything"""
+        """ Speeds of everything """
         # Positives will either move down or to the right, multiplying by -1 will change it to the left or up
-        self.fall_acceleration = 7
+        self.fall_acceleration = 5
 
-        self.JackLumber_init_jump_vel = -70
-        self.JackLumber_x_vel = 20
-        self.JackLumber_dash_vel = self.JackLumber_x_vel * 3
+        # Jack Lumber speeds
+        self.JL_init_jump_vel = -55  # Just enough to get him a little higher than his height
+        self.JL_x_vel = 20
+        self.JL_dash_vel = self.JL_x_vel * 3
 
-        """Timed delays for characters, objects, and gameplay events"""
+        # Ranged attack speed
+        self.JL_ranged_vel = 60
+
+        """ Timed delays for characters, objects, and gameplay events """
         # Only one of these Jack lumber delays can be active at once
-        self.JackLumber_damage_reaction_period = 500
-        self.JackLumber_dash_stage_1_period = 300
-        self.JackLumber_dash_stage_2_period = 800
-        self.JackLumber_dashing_period = 150
+        self.JL_damage_reaction_period = 500
+        self.JL_dash_stage_1_period = 300
+        self.JL_dash_stage_2_period = 800
+        self.JL_dashing_period = 150
+        self.JL_melee_period = 300
+        self.JL_melee_life_period = int(self.JL_melee_period / 3)
+        self.JL_ranged_period = self.JL_melee_period
 
         # These delays can happen at the same time
-        self.JackLumber_charge_M_period = 1000
-        self.JackLumber_charge_R_period = 1000
-        self.JackLumber_charge_D_period = 1000
-        self.JackLumber_damaged_invinc_period = 1000
+        self.JL_charge_M_period = 1000
+        self.JL_charge_R_period = 1000
+        self.JL_charge_D_period = 1000
+        self.JL_damaged_invinc_period = 1000

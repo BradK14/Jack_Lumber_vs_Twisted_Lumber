@@ -54,8 +54,8 @@ def keypresses(joystick, jack):
         jack.jump_press(True)
     else:
         jack.jump_press(False)
-    # CONTROL or Right shoulder button(RB)
-    if pygame.key.get_pressed()[pygame.K_LCTRL] or joystick.get_button(5):
+    # SHIFT or Right shoulder button(RB)
+    if pygame.key.get_pressed()[pygame.K_LSHIFT] or joystick.get_button(5):
         jack.invincidash(True)
     else:
         jack.invincidash(False)
@@ -115,7 +115,7 @@ def update_screen(screen, UI, bg_blocks, surfaces, jack):
 
 
     # Next the player's character
-    screen.blit_obj(jack)
+    jack.blit_me(screen)
 
     # Last the user interface
     UI.display(screen, jack)
