@@ -258,7 +258,7 @@ class WorldSettings(object):
         # Jack Lumber speeds
         self.JL_init_jump_vel = -55  # Just enough to get him a little higher than his height
         self.JL_x_vel = 20
-        self.JL_dash_vel = self.JL_x_vel * 3
+        self.JL_dash_vel = self.JL_x_vel * 2
 
         # Ranged attack speed
         self.JL_ranged_vel = 60
@@ -268,10 +268,10 @@ class WorldSettings(object):
         self.JL_damage_reaction_period = 500
         self.JL_dash_stage_1_period = 300
         self.JL_dash_stage_2_period = 800
-        self.JL_dashing_period = 150
+        self.JL_dashing_period = 300
         self.JL_melee_period = 300
         self.JL_melee_life_period = int(self.JL_melee_period / 3)
-        self.JL_ranged_period = self.JL_melee_period
+        self.JL_ranged_period = int(self.JL_melee_period * 2 / 3)
 
         # These delays can happen at the same time
         self.JL_charge_M_period = 1000
