@@ -46,4 +46,4 @@ class Ranged(Sprite):
         self.rect.x = int(self.x)
 
     def update_animation(self, cur_time):
-        self.image = self.anim.play_once_var_dir(cur_time, self.facing_left)
+        self.image = self.anim.play_var_dir(cur_time, self.facing_left)

@@ -76,12 +76,19 @@ def update_character_inputs(cur_time, jack):
 
 
 # Update the positions of all moving objects
-def update_positions(surfaces, jack):
+def update_positions(surfaces, ranged_attacks, jack):
     jack.update_pos()
 
     # Immediately after everything has been moved deal with any collisions
     check_collisions(surfaces, jack)
 
+    # After Jack's position has been determined create his ranged attack if he is creating one
+    if jack.ranged_is_created:
+        ranged_attacks.add(jack.create_ranged_attack())
+
+    # Move all ranged attacks
+    for ranged_attack in ranged_attacks:
+        ranged_attack.update_position()
 
 # Deal with any collisions between objects and characters
 def check_collisions(surfaces, jack):
@@ -93,12 +100,14 @@ def check_character_to_surface_collision(surfaces, jack):
     jack.check_surface_collisions(surfaces)
 
 
-def update_animations(jack):
+def update_animations(cur_time, ranged_attacks, jack):
     jack.update_animation()
 
+    for ranged_attack in ranged_attacks:
+        ranged_attack.update_animation(cur_time)
 
 # Display a new screen based on all object locations
-def update_screen(screen, UI, bg_blocks, surfaces, jack):
+def update_screen(screen, UI, bg_blocks, surfaces, ranged_attacks, jack):
     # Wipe the current screen
     screen.new_frame()
 
@@ -116,6 +125,10 @@ def update_screen(screen, UI, bg_blocks, surfaces, jack):
 
     # Next the player's character
     jack.blit_me(screen)
+
+    # Next the attacks
+    for ranged_attack in ranged_attacks:
+        screen.blit_obj(ranged_attack)
 
     # Last the user interface
     UI.display(screen, jack)

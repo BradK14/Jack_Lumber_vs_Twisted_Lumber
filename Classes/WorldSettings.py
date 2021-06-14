@@ -52,6 +52,22 @@ class WorldSettings(object):
         self.BackgroundBlock_width = self.buom
         self.BackgroundBlock_height = self.BackgroundBlock_width
 
+        """ Timed delays for characters, objects, and gameplay events """
+        # Only one of these Jack lumber delays can be active at once
+        self.JL_damage_reaction_period = 500
+        self.JL_dash_stage_1_period = 300
+        self.JL_dash_stage_2_period = 800
+        self.JL_dashing_period = 300
+        self.JL_melee_period = 300
+        self.JL_melee_life_period = int(self.JL_melee_period / 3)
+        self.JL_ranged_period = int(self.JL_melee_period * 2 / 3)
+
+        # These delays can happen at the same time
+        self.JL_charge_M_period = 1000
+        self.JL_charge_R_period = 1000
+        self.JL_charge_D_period = 1000
+        self.JL_damaged_invinc_period = 1000
+
         """ Load non-animated images """
         self.JL_left_image = pygame.transform.scale(pygame.image.load('Images/Jack Lumber.png'), (self.JL_width, self.JL_height))
         self.JL_right_image = pygame.transform.flip(self.JL_left_image, True, False)
@@ -125,10 +141,10 @@ class WorldSettings(object):
         self.JL_melee_right_anim = (pygame.transform.scale(pygame.image.load('Images/Jack Lumber Melee-1.png'),
                                                            (self.JL_melee_width,
                                                                     self.JL_melee_height)),
-                                    pygame.transform.scale(pygame.image.load('Images/Jack Lumber Melee-2.png'),
+                                    pygame.transform.scale(pygame.image.load('Images/Jack Lumber Melee-3.png'),
                                                                    (self.JL_melee_width,
                                                                     self.JL_melee_height)),
-                                    pygame.transform.scale(pygame.image.load('Images/Jack Lumber Melee-3.png'),
+                                    pygame.transform.scale(pygame.image.load('Images/Jack Lumber Melee-5.png'),
                                                                    (self.JL_melee_width,
                                                                     self.JL_melee_height)),
                                     pygame.transform.scale(pygame.image.load('Images/Jack Lumber Melee-4.png'),
@@ -145,42 +161,23 @@ class WorldSettings(object):
                                                                     self.JL_melee_height)))
         self.JL_melee_left_anim = (pygame.transform.flip(self.JL_melee_right_anim[0], True, False),
                                    pygame.transform.flip(self.JL_melee_right_anim[1], True, False),
-                                   pygame.transform.flip(self.JL_melee_right_anim[2], True, False),
-                                   pygame.transform.flip(self.JL_melee_right_anim[3], True, False),
-                                   pygame.transform.flip(self.JL_melee_right_anim[4], True, False),
-                                   pygame.transform.flip(self.JL_melee_right_anim[5], True, False),
-                                   pygame.transform.flip(self.JL_melee_right_anim[6], True, False))
+                                   pygame.transform.flip(self.JL_melee_right_anim[2], True, False))
         self.JL_charged_melee_right_anim = (pygame.transform.scale(self.JL_melee_right_anim[0],
                                                                    (self.JL_charged_melee_width,
-                                                                            self.JL_charged_melee_height)),
+                                                                    self.JL_charged_melee_height)),
                                             pygame.transform.scale(self.JL_melee_right_anim[1],
-                                                                           (self.JL_charged_melee_width,
-                                                                            self.JL_charged_melee_height)),
+                                                                   (self.JL_charged_melee_width,
+                                                                    self.JL_charged_melee_height)),
                                             pygame.transform.scale(self.JL_melee_right_anim[2],
-                                                                           (self.JL_charged_melee_width,
-                                                                            self.JL_charged_melee_height)),
-                                            pygame.transform.scale(self.JL_melee_right_anim[3],
-                                                                           (self.JL_charged_melee_width,
-                                                                            self.JL_charged_melee_height)),
-                                            pygame.transform.scale(self.JL_melee_right_anim[4],
-                                                                           (self.JL_charged_melee_width,
-                                                                            self.JL_charged_melee_height)),
-                                            pygame.transform.scale(self.JL_melee_right_anim[5],
-                                                                           (self.JL_charged_melee_width,
-                                                                            self.JL_charged_melee_height)),
-                                            pygame.transform.scale(self.JL_melee_right_anim[6],
-                                                                           (self.JL_charged_melee_width,
-                                                                            self.JL_charged_melee_height)))
+                                                                   (self.JL_charged_melee_width,
+                                                                    self.JL_charged_melee_height)))
         self.JL_charged_melee_left_anim = (pygame.transform.flip(self.JL_charged_melee_right_anim[0], True, False),
                                            pygame.transform.flip(self.JL_charged_melee_right_anim[1], True, False),
-                                           pygame.transform.flip(self.JL_charged_melee_right_anim[2], True, False),
-                                           pygame.transform.flip(self.JL_charged_melee_right_anim[3], True, False),
-                                           pygame.transform.flip(self.JL_charged_melee_right_anim[4], True, False),
-                                           pygame.transform.flip(self.JL_charged_melee_right_anim[5], True, False),
-                                           pygame.transform.flip(self.JL_charged_melee_right_anim[6], True, False))
-        self.JL_melee_anim_size = 7
-        self.JL_melee_anim_rates = (int(self.fps_t), int(self.fps_t), int(self.fps_t), int(self.fps_t),
-                                    int(self.fps_t), int(self.fps_t), int(self.fps_t))
+                                           pygame.transform.flip(self.JL_charged_melee_right_anim[2], True, False))
+        self.JL_melee_anim_size = 3
+        JL_melee_anim_rate = self.JL_melee_life_period / self.JL_melee_anim_size
+        self.JL_melee_anim_rates = (JL_melee_anim_rate, JL_melee_anim_rate, JL_melee_anim_rate, JL_melee_anim_rate,
+                                    JL_melee_anim_rate, JL_melee_anim_rate, JL_melee_anim_rate)
 
         # Jack Lumber's ranged and charged ranged attack animations
         self.JL_ranged_right_anim = (pygame.transform.scale(pygame.image.load('Images/Jack Lumber Ranged-1.png'),
@@ -262,19 +259,3 @@ class WorldSettings(object):
 
         # Ranged attack speed
         self.JL_ranged_vel = 60
-
-        """ Timed delays for characters, objects, and gameplay events """
-        # Only one of these Jack lumber delays can be active at once
-        self.JL_damage_reaction_period = 500
-        self.JL_dash_stage_1_period = 300
-        self.JL_dash_stage_2_period = 800
-        self.JL_dashing_period = 300
-        self.JL_melee_period = 300
-        self.JL_melee_life_period = int(self.JL_melee_period / 3)
-        self.JL_ranged_period = int(self.JL_melee_period * 2 / 3)
-
-        # These delays can happen at the same time
-        self.JL_charge_M_period = 1000
-        self.JL_charge_R_period = 1000
-        self.JL_charge_D_period = 1000
-        self.JL_damaged_invinc_period = 1000

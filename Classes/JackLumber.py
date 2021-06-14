@@ -9,6 +9,8 @@ from Classes.Animation import Animation
 from Classes.Delay import Delay
 from Classes.Melee import Melee
 from Classes.ChargedMelee import ChargedMelee
+from Classes.Ranged import Ranged
+from Classes.ChargedRanged import ChargedRanged
 
 
 class JackLumber(Character):
@@ -106,6 +108,7 @@ class JackLumber(Character):
         self.grounded_dashing = False  # Used to validate dash jumps
         self.melee_charged = False
         self.ranged_charged = False
+        self.ranged_is_created = False  # Checked by the main loop to know whether or not to create a ranged attack
         self.invincible = False
 
     def left_press(self, left_pressed):
@@ -152,12 +155,55 @@ class JackLumber(Character):
             self.R_delay.reset()
             self.ranged_charged = True
 
-        # if we are in a state of delay from either being damaged, dash_stage_1, dash_stage_2, dashing,
-        # attacking with melee, or attacking with ranged.
-        if self.cur_delay_is_active():
+        # Melee reset when melee
+        if not self.melee_life_delay.is_active(self.cur_time):
+            del self.melee
+            self.melee = None
+            self.melee_life_delay.reset()
+
+        # Melee and Ranged attacks
+        if self.melee_pressed or self.ranged_pressed:
+            # Allow regular movement
+            self.set_regular_movement_states()
+            # If dashing previously, cancel it and turn on air dash
+            if self.cur_delay_is_active():
+                self.reset_cur_delay()
+                self.dashing_x = False
+                self.dashing_up = False
+                self.dashing_down = False
+                self.dash_stage_1 = False
+                self.dash_stage_2 = False
+                self.dashing = False
+                self.grounded_dashing = False
+                self.air_dashing = True
+            # Check if we are able to attack
+            if not self.attack_delay_is_active():
+                self.reset_attack_delay()
+                if self.melee_pressed:
+                    if self.melee_charged:
+                        self.melee = ChargedMelee(self.w_settings, self.rect, self.facing_left)
+                    else:
+                        self.melee = Melee(self.w_settings, self.rect, self.facing_left)
+                    self.melee_life_delay.begin(self.cur_time)
+                    self.M_delay.reset()
+                    self.M_delay.begin(self.cur_time)
+                    self.attack_delay = self.melee_delay
+                    self.attack_delay.begin(self.cur_time)
+                # Ranged
+                elif self.ranged_pressed:
+                    self.ranged_is_created = True  # To be consumed in a function call
+                    self.R_delay.reset()
+                    self.R_delay.begin(self.cur_time)
+                    self.attack_delay = self.ranged_delay
+                    self.attack_delay.begin(self.cur_time)
+
+        # if we are in a state of delay from either being damaged, dash_stage_1, dash_stage_2, or dashing
+        elif self.cur_delay_is_active():
+            '''
             # If attacking, allow regular movement
-            if self.cur_delay == self.melee_delay or self.cur_delay == self.ranged_delay:
+            if self.attack_delay == self.melee_delay or self.attack_delay == self.ranged_delay:
                 self.set_regular_movement_states()
+            '''
             # Cancel delay if in dash stage 1 or 2 and we release the dash button
             if (self.dash_stage_1 or self.dash_stage_2) and not self.dash_pressed:
                 self.reset_cur_delay()
@@ -197,9 +243,11 @@ class JackLumber(Character):
 
         # Delay has run out or is inactive
         else:
+            '''
             if self.cur_delay == self.melee_delay:
                 self.reset_cur_delay()
                 del self.melee
+            '''
             # Shift from dash stage 1 to dash stage 2
             if self.dash_stage_1:
                 self.reset_cur_delay()
@@ -235,6 +283,7 @@ class JackLumber(Character):
                     self.moving_x = False
             else:  # Regular movement allowed, and attacks are allowed
                 self.set_regular_movement_states()
+                '''
                 # Melee
                 if self.melee_pressed:
                     if self.melee_charged:
@@ -248,17 +297,31 @@ class JackLumber(Character):
                 # Ranged
                 elif self.ranged_pressed:
                     pass
+                '''
 
-    # Helper function to reset the cur_delay to None
+    # Helper functions to reset our delay variables to None
     def reset_cur_delay(self):
-        self.cur_delay.reset()
-        del self.cur_delay
-        self.cur_delay = None
+        if self.cur_delay is not None:
+            self.cur_delay.reset()
+            del self.cur_delay
+            self.cur_delay = None
 
-    # Helper function to check if the cur_delay variable is active
+    def reset_attack_delay(self):
+        if self.attack_delay is not None:
+            self.attack_delay.reset()
+            del self.attack_delay
+            self.attack_delay = None
+
+    # Helper functions to check if our general delay variables are active
     def cur_delay_is_active(self):
         if self.cur_delay is not None:
             if self.cur_delay.is_active(self.cur_time):
+                return True
+        return False
+
+    def attack_delay_is_active(self):
+        if self.attack_delay is not None:
+            if self.attack_delay.is_active(self.cur_time):
                 return True
         return False
 
@@ -307,6 +370,14 @@ class JackLumber(Character):
         elif not self.jump_pressed:
             self.jumping = False
             self.jump_pressed_already = False
+
+    # Create a ranged attack
+    def create_ranged_attack(self):
+        self.ranged_is_created = False  # Consume this value until user validly creates another
+        if self.ranged_charged:
+            return ChargedRanged(self.w_settings, self.rect, self.facing_left)
+        else:
+            return Ranged(self.w_settings, self.rect, self.facing_left)
 
     """ Character movement """
     def update_pos(self):
@@ -368,7 +439,7 @@ class JackLumber(Character):
     def check_surface_collisions(self, surfaces):
         super(JackLumber, self).check_surface_collisions(surfaces)
         # Move melee attack with Jack Lumber
-        if self.cur_delay == self.melee_delay:
+        if self.melee is not None:
             self.melee.reposition(self.rect, self.facing_left)
 
     # Addition to limit dash to once per jump (infinite while on the ground)
@@ -470,10 +541,10 @@ class JackLumber(Character):
                 self.image = self.w_settings.JL_right_image
 
         # Melee attack
-        if self.cur_delay == self.melee_delay:
+        if self.melee is not None:
             self.melee.update_anim(self.cur_time)
 
     def blit_me(self, screen):
         screen.blit_obj(self)
-        if self.cur_delay == self.melee_delay:
+        if self.melee is not None:
             screen.blit_obj(self.melee)
