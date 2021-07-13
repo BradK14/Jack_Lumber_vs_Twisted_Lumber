@@ -33,8 +33,8 @@ class WorldSettings(object):
 
         self.JL_ranged_width = self.buom
         self.JL_ranged_height = self.JL_ranged_width
-        self.JL_charged_ranged_width = self.JL_ranged_width * 2
-        self.JL_charged_ranged_height = self.JL_charged_ranged_width
+        self.JL_charged_ranged_height = self.JL_height
+        self.JL_charged_ranged_width = self.JL_charged_ranged_height
 
         # Jack Lumber's charge state indicator sizes
         self.charge_M_width = int(self.buom / 2)
@@ -43,6 +43,10 @@ class WorldSettings(object):
         self.charge_R_height = self.charge_M_width
         self.charge_D_width = self.charge_M_width
         self.charge_D_height = self.charge_M_width
+
+        # Twisted Lumber's size
+        self.TL_width = int(self.JL_width * 1.5)
+        self.TL_height = int(self.TL_width * 1.5)
 
         # Block sizes
         self.GrassyBlock_width = self.buom
@@ -69,6 +73,7 @@ class WorldSettings(object):
         self.JL_damaged_invinc_period = 1000
 
         """ Load non-animated images """
+        # Jack Lumber images
         self.JL_left_image = pygame.transform.scale(pygame.image.load('Images/Jack Lumber.png'), (self.JL_width, self.JL_height))
         self.JL_right_image = pygame.transform.flip(self.JL_left_image, True, False)
         self.JL_jump_left_image = pygame.transform.scale(pygame.image.load('Images/Jack Lumber Jump.png'), (self.JL_width, self.JL_height))
@@ -76,12 +81,19 @@ class WorldSettings(object):
         self.JL_dash_stage_2_left_image = pygame.transform.scale(pygame.image.load('Images/Jack Lumber invincidash-4.png'), (self.JL_width, self.JL_height))
         self.JL_dash_stage_2_right_image = pygame.transform.flip(self.JL_dash_stage_2_left_image, True, False)
 
+        # Twisted Lumber images
+        self.TL_left_image = pygame.transform.scale(pygame.image.load('Images/Error Image.png'), (self.TL_width, self.TL_height))
+        self.TL_right_image = pygame.transform.flip(self.TL_left_image, True, False)
+
+        # Charge notification images
         self.charge_M_image = pygame.transform.scale(pygame.image.load('Images/Charge Display-M.png'), (self.charge_M_width, self.charge_M_height))
         self.charge_R_image = pygame.transform.scale(pygame.image.load('Images/Charge Display-R.png'), (self.charge_R_width, self.charge_R_height))
         self.charge_D_image = pygame.transform.scale(pygame.image.load('Images/Charge Display-D.png'), (self.charge_D_width, self.charge_D_height))
 
+        # Foreground block image
         self.GrassyBlock_image = pygame.transform.scale(pygame.image.load('Images/Grassy Block.png'), (self.GrassyBlock_width, self.GrassyBlock_height))
 
+        # Background block image
         self.BackgroundBlock_image = pygame.transform.scale(pygame.image.load('Images/Background Block.png'), (self.BackgroundBlock_width, self.BackgroundBlock_height))
 
         """ Animations (variables for animation sizes just below animation lists) """

@@ -76,11 +76,13 @@ def update_character_inputs(cur_time, jack):
 
 
 # Update the positions of all moving objects
-def update_positions(surfaces, ranged_attacks, jack):
+def update_positions(w_settings, surfaces, ranged_attacks, jack, enemies):
     jack.update_pos()
+    for enemy in enemies:
+        enemy.update_pos()
 
     # Immediately after everything has been moved deal with any collisions
-    check_collisions(surfaces, jack)
+    check_collisions(surfaces, jack, enemies)
 
     # After Jack's position has been determined create his ranged attack if he is creating one
     if jack.ranged_is_created:
@@ -89,15 +91,20 @@ def update_positions(surfaces, ranged_attacks, jack):
     # Move all ranged attacks
     for ranged_attack in ranged_attacks:
         ranged_attack.update_position()
+        # Delete ranged attacks that have moved off the map
+        if ranged_attack.rect.right < 0 or ranged_attack.rect.left > w_settings.screen_width:
+            ranged_attacks.remove(ranged_attack)
 
 # Deal with any collisions between objects and characters
-def check_collisions(surfaces, jack):
-    check_character_to_surface_collision(surfaces, jack)
+def check_collisions(surfaces, jack, enemies):
+    check_character_to_surface_collision(surfaces, jack, enemies)
 
 
 # Make sure characters do not overlap with surfaces like blocks
-def check_character_to_surface_collision(surfaces, jack):
+def check_character_to_surface_collision(surfaces, jack, enemies):
     jack.check_surface_collisions(surfaces)
+    for enemy in enemies:
+        enemy.check_surface_collisions(surfaces)
 
 
 def update_animations(cur_time, ranged_attacks, jack):
@@ -107,7 +114,7 @@ def update_animations(cur_time, ranged_attacks, jack):
         ranged_attack.update_animation(cur_time)
 
 # Display a new screen based on all object locations
-def update_screen(screen, UI, bg_blocks, surfaces, ranged_attacks, jack):
+def update_screen(screen, UI, bg_blocks, surfaces, ranged_attacks, jack, enemies):
     # Wipe the current screen
     screen.new_frame()
 
@@ -121,7 +128,8 @@ def update_screen(screen, UI, bg_blocks, surfaces, ranged_attacks, jack):
             screen.blit_obj(block)
 
     # Next the enemies
-
+    for enemy in enemies:
+        screen.blit_obj(enemy)
 
     # Next the player's character
     jack.blit_me(screen)

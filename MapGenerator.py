@@ -6,6 +6,7 @@ The second half is for functions used to create maps.
 """
 
 import pygame
+from Classes.TwistedLumber import TwistedLumber
 from Classes.BackgroundBlock import BackgroundBlock
 from Classes.Surface import Surface
 
@@ -19,7 +20,7 @@ def create_bg_blocks(w_settings, bg_blocks, x, y, width, height):
 
 """ Maps """
 # Map 1
-def load_map(w_settings, bg_blocks, surfaces, jack):
+def load_map(w_settings, bg_blocks, surfaces, jack, enemies):
     # Background
     create_bg_blocks(w_settings, bg_blocks, 0, 0, 60, 34)
 
@@ -34,3 +35,6 @@ def load_map(w_settings, bg_blocks, surfaces, jack):
     jack.y = 300
     jack.rect.x = 300
     jack.rect.y = 300
+
+    # Create and place a Twisted Lumber enemy
+    enemies.add(TwistedLumber(w_settings, 1856 - (w_settings.TL_width * 2), 1016 - w_settings.TL_height, True))

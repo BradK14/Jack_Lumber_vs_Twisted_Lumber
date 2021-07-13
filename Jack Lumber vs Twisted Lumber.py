@@ -33,12 +33,13 @@ def vs_Twisted_Lumber():
     jack = JackLumber(w_settings, 0, 0, False)
 
     # Create containers for each asset needed
+    enemies = Group()
     bg_blocks = Group()
     surfaces = Group()
     ranged_attacks = Group()
 
     # Create the map
-    mg.load_map(w_settings, bg_blocks, surfaces, jack)
+    mg.load_map(w_settings, bg_blocks, surfaces, jack, enemies)
 
     # Create our timers
     fps_timer = pygame.time.Clock()  # This clock specifically used for frame rate
@@ -51,9 +52,9 @@ def vs_Twisted_Lumber():
             cur_time = pygame.time.get_ticks()
             run = gf.check_events(joystick, jack)
             gf.update_character_inputs(cur_time, jack)
-            gf.update_positions(surfaces, ranged_attacks, jack)
+            gf.update_positions(w_settings, surfaces, ranged_attacks, jack, enemies)
             gf.update_animations(cur_time, ranged_attacks, jack)
-            gf.update_screen(screen, UI, bg_blocks, surfaces, ranged_attacks, jack)
+            gf.update_screen(screen, UI, bg_blocks, surfaces, ranged_attacks, jack, enemies)
         fps_timer.tick(w_settings.fps)
 
     # End game

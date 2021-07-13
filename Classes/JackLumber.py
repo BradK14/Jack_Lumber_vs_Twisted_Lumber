@@ -98,10 +98,11 @@ class JackLumber(Character):
         self.air_dashing = False
         self.jump_pressed_already = False
         self.jumping = False
+        self.wall_jumping = False
         self.dash_ready = False
         self.being_damaged = False
-        self.melee_attacking = False
-        self.ranged_attacking = False
+        self.charged_melee_attacking = False  # Used for determining if we can perform a wall jump
+        # self.ranged_attacking = False
         self.dash_stage_1 = False
         self.dash_stage_2 = False
         self.dashing = False
@@ -136,6 +137,9 @@ class JackLumber(Character):
     def determine_state(self, cur_time):
         # Update the current time
         self.cur_time = cur_time
+
+        # Reset temporary markers
+        self.charged_melee_attacking = False
 
         # Check if jump button has been released since the last jump
         if not self.jump_pressed:
@@ -182,6 +186,7 @@ class JackLumber(Character):
                 if self.melee_pressed:
                     if self.melee_charged:
                         self.melee = ChargedMelee(self.w_settings, self.rect, self.facing_left)
+                        self.charged_melee_attacking = True
                     else:
                         self.melee = Melee(self.w_settings, self.rect, self.facing_left)
                     self.melee_life_delay.begin(self.cur_time)
@@ -380,7 +385,7 @@ class JackLumber(Character):
             return Ranged(self.w_settings, self.rect, self.facing_left)
 
     """ Character movement """
-    def update_pos(self):
+    def update_pos(self):  # Overrides parents (Character) update_pos function
         """
         if self.being_damaged:
             self.moving_x = False
@@ -419,8 +424,12 @@ class JackLumber(Character):
                     self.x += self.dash_vel
                 else:
                     self.x += self.x_vel
+
+            # Wall jump (do nothing as it is handled in check surfaces, jumping controls not allowed)
+            if self.wall_jumping:
+                pass
             # Dash jump
-            if self.jumping and self.grounded_dashing:
+            elif self.jumping and self.grounded_dashing:
                 self.y_velocity = self.w_settings.JL_init_jump_vel
                 self.grounded_dashing = False  # STATE CHANGE
             # Jump
@@ -448,6 +457,7 @@ class JackLumber(Character):
         self.dash_ready = True
         self.jumping = False
         self.air_dashing = False
+        self.wall_jumping = False
         self.dash_to_surface_reset()
 
     # Bonk the bottom of a surface, kill upwards momentum
@@ -458,10 +468,18 @@ class JackLumber(Character):
     def left_of_surface(self, surface):
         super(JackLumber, self).left_of_surface(surface)
         self.dash_to_surface_reset()
+        if self.charged_melee_attacking:
+            self.wall_jumping = True
+            self.y_velocity = self.w_settings.JL_init_jump_vel * 1.25
+            self.air_dashing = True
 
     def right_of_surface(self, surface):
         super(JackLumber, self).right_of_surface(surface)
         self.dash_to_surface_reset()
+        if self.charged_melee_attacking:
+            self.wall_jumping = True
+            self.y_velocity = self.w_settings.JL_init_jump_vel * 1.25
+            self.air_dashing = True
 
     # Cancel dash when dashing into a surface
     def dash_to_surface_reset(self):
