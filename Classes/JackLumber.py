@@ -204,11 +204,6 @@ class JackLumber(Character):
 
         # if we are in a state of delay from either being damaged, dash_stage_1, dash_stage_2, or dashing
         elif self.cur_delay_is_active():
-            '''
-            # If attacking, allow regular movement
-            if self.attack_delay == self.melee_delay or self.attack_delay == self.ranged_delay:
-                self.set_regular_movement_states()
-            '''
             # Cancel delay if in dash stage 1 or 2 and we release the dash button
             if (self.dash_stage_1 or self.dash_stage_2) and not self.dash_pressed:
                 self.reset_cur_delay()
@@ -248,11 +243,6 @@ class JackLumber(Character):
 
         # Delay has run out or is inactive
         else:
-            '''
-            if self.cur_delay == self.melee_delay:
-                self.reset_cur_delay()
-                del self.melee
-            '''
             # Shift from dash stage 1 to dash stage 2
             if self.dash_stage_1:
                 self.reset_cur_delay()
@@ -288,21 +278,6 @@ class JackLumber(Character):
                     self.moving_x = False
             else:  # Regular movement allowed, and attacks are allowed
                 self.set_regular_movement_states()
-                '''
-                # Melee
-                if self.melee_pressed:
-                    if self.melee_charged:
-                        self.melee = ChargedMelee(self.w_settings, self.rect, self.facing_left)
-                    else:
-                        self.melee = Melee(self.w_settings, self.rect, self.facing_left)
-                    self.M_delay.reset()
-                    self.M_delay.begin(self.cur_time)
-                    self.cur_delay = self.melee_delay
-                    self.cur_delay.begin(self.cur_time)
-                # Ranged
-                elif self.ranged_pressed:
-                    pass
-                '''
 
     # Helper functions to reset our delay variables to None
     def reset_cur_delay(self):
@@ -386,10 +361,6 @@ class JackLumber(Character):
 
     """ Character movement """
     def update_pos(self):  # Overrides parents (Character) update_pos function
-        """
-        if self.being_damaged:
-            self.moving_x = False
-        """
         # Beginning a dash or in dash stage 2
         if self.dash_stage_1 or self.dash_stage_2:
             self.y_velocity = 0
@@ -510,29 +481,7 @@ class JackLumber(Character):
             if self.facing_left:
                 self.image = self.w_settings.JL_dash_stage_2_left_image
             elif not self.facing_left:
-                '''
-                if self.dash_consumed:
-                    if self.cur_anim != self.invincidash_stage_2_right_anim:
-                        self.cur_anim.reset()
-                        self.cur_anim = self.invincidash_stage_2_right_anim
-                    self.image = self.cur_anim.play(self.cur_time)
-                else:
-                '''
                 self.image = self.w_settings.JL_dash_stage_2_right_image
-        # Invincidash
-            '''
-        elif self.dashing and self.dash_consumed:
-            if self.facing_left:
-                if self.cur_anim != self.invincidash_left_anim:
-                    self.cur_anim.reset()
-                    self.cur_anim = self.invincidash_left_anim
-                self.image = self.cur_anim.play(self.cur_time)
-            elif not self.facing_left:
-                if self.cur_anim != self.invincidash_right_anim:
-                    self.cur_anim.reset()
-                    self.cur_anim = self.invincidash_right_anim
-                self.image = self.cur_anim.play(self.cur_time)
-            '''
         # Walking
         elif self.moving_x and self.grounded:
             if self.facing_left:
