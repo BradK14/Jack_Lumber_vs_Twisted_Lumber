@@ -16,7 +16,7 @@ __Game Objective:__\
 Currently there is no objective in the game.
 There is supposed to be a boss to fight, but the boss character has not yet been implemented.
 For now just enjoy running around as Jack Lumber.
-
+ 
 __Controls:__\
 A and D: Control left and right movement / Can be used to dash left or right\
 W and S: Can be used to dash up and down\
