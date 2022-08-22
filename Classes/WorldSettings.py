@@ -45,8 +45,14 @@ class WorldSettings(object):
         self.charge_D_height = self.charge_M_width
 
         # Twisted Lumber's size
-        self.TL_width = int(self.JL_width * 1.5)
-        self.TL_height = int(self.TL_width * 1.5)
+        self.TL_width = int(self.JL_width * 2)
+        self.TL_height = int(self.TL_width * 2)
+
+        # Twisted Lumber's attack sizes
+        self.TL_leaf_width = self.buom
+        self.TL_leaf_height = self.TL_leaf_width
+        self.TL_vine_width = int(self.buom / 2)
+        self.TL_vine_height = int(self.TL_vine_width * 2)
 
         # Block sizes
         self.GrassyBlock_width = self.buom
@@ -82,8 +88,13 @@ class WorldSettings(object):
         self.JL_dash_stage_2_right_image = pygame.transform.flip(self.JL_dash_stage_2_left_image, True, False)
 
         # Twisted Lumber images
-        self.TL_left_image = pygame.transform.scale(pygame.image.load('Images/Error Image.png'), (self.TL_width, self.TL_height))
+        self.TL_left_image = pygame.transform.scale(pygame.image.load('Images/Twisted Lumber-1.png'), (self.TL_width, self.TL_height))
         self.TL_right_image = pygame.transform.flip(self.TL_left_image, True, False)
+        self.TL_attack_left_image = pygame.transform.scale(pygame.image.load('Images/Twisted Lumber-2.png'), (self.TL_width, self.TL_height))
+        self.TL_attack_right_image = pygame.transform.flip(self.TL_attack_left_image, True, False)
+        self.TL_leaf_left_image = pygame.transform.scale(pygame.image.load('Images/TL_Leaf.png'), (self.TL_leaf_width, self.TL_leaf_height))
+        self.TL_right_image = pygame.transform.flip(self.TL_leaf_left_image, True, False)
+        self.TL_vine_image = pygame.transform.scale(pygame.image.load('Images/TL_Vine.png'), (self.TL_vine_width, self.TL_vine_height))
 
         # Charge notification images
         self.charge_M_image = pygame.transform.scale(pygame.image.load('Images/Charge Display-M.png'), (self.charge_M_width, self.charge_M_height))
