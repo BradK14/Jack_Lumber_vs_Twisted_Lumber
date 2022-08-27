@@ -74,6 +74,9 @@ def keypresses(joystick, jack):
 def update_character_inputs(cur_time, jack):
     jack.determine_state(cur_time)
 
+def update_ai(cur_time, jack, enemies):
+    for enemy in enemies:
+        enemy.decide_next_move(cur_time, jack)
 
 # Update the positions of all moving objects
 def update_positions(w_settings, surfaces, ranged_attacks, jack, enemies):
@@ -107,8 +110,11 @@ def check_character_to_surface_collision(surfaces, jack, enemies):
         enemy.check_surface_collisions(surfaces)
 
 
-def update_animations(cur_time, ranged_attacks, jack):
+def update_animations(cur_time, ranged_attacks, jack, enemies):
     jack.update_animation()
+
+    for enemy in enemies:
+        enemy.update_animation()
 
     for ranged_attack in ranged_attacks:
         ranged_attack.update_animation(cur_time)

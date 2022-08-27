@@ -78,6 +78,10 @@ class WorldSettings(object):
         self.JL_charge_D_period = 1000
         self.JL_damaged_invinc_period = 1000
 
+        # Twisted Lumber delays
+        self.TL_wait_period = 1000
+        self.TL_jump_period = 2000
+
         """ Load non-animated images """
         # Jack Lumber images
         self.JL_left_image = pygame.transform.scale(pygame.image.load('Images/Jack Lumber.png'), (self.JL_width, self.JL_height))
@@ -93,7 +97,7 @@ class WorldSettings(object):
         self.TL_attack_left_image = pygame.transform.scale(pygame.image.load('Images/Twisted Lumber-2.png'), (self.TL_width, self.TL_height))
         self.TL_attack_right_image = pygame.transform.flip(self.TL_attack_left_image, True, False)
         self.TL_leaf_left_image = pygame.transform.scale(pygame.image.load('Images/TL_Leaf.png'), (self.TL_leaf_width, self.TL_leaf_height))
-        self.TL_right_image = pygame.transform.flip(self.TL_leaf_left_image, True, False)
+        self.TL_leaf_right_image = pygame.transform.flip(self.TL_leaf_left_image, True, False)
         self.TL_vine_image = pygame.transform.scale(pygame.image.load('Images/TL_Vine.png'), (self.TL_vine_width, self.TL_vine_height))
 
         # Charge notification images
@@ -282,3 +286,7 @@ class WorldSettings(object):
 
         # Ranged attack speed
         self.JL_ranged_vel = 60
+
+        # Twisted Lumber speeds
+        self.TL_init_jump_vel = self.JL_init_jump_vel
+        self.TL_x_vel = self.JL_x_vel
