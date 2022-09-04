@@ -74,15 +74,32 @@ def keypresses(joystick, jack):
 def update_character_inputs(cur_time, jack):
     jack.determine_state(cur_time)
 
-def update_ai(cur_time, jack, enemies):
+def update_ai(cur_time, leaves, jack, enemies):
     for enemy in enemies:
-        enemy.decide_next_move(cur_time, jack)
+        enemy.decide_next_move(cur_time, leaves, jack)
 
 # Update the positions of all moving objects
-def update_positions(w_settings, surfaces, ranged_attacks, jack, enemies):
+def update_positions(w_settings, surfaces, ranged_attacks, leaves, jack, enemies, cur_time):
+    # Move Jack
     jack.update_pos()
+
+    # Move the enemies
     for enemy in enemies:
         enemy.update_pos()
+
+    # Move all ranged attacks
+    for ranged_attack in ranged_attacks:
+        ranged_attack.update_position()
+        # Delete ranged attacks that have moved off the screen
+        if ranged_attack.rect.right < 0 or ranged_attack.rect.left > w_settings.screen_width:
+            ranged_attacks.remove(ranged_attack)
+
+    # Move all leaves
+    for leaf in leaves:
+        leaf.update_pos(cur_time)
+        # Delete leaves that have moved off the screen
+        if leaf.rect.right < 0 or leaf.rect.left > w_settings.screen_width or leaf.rect.top > w_settings.screen_height or leaf.rect.bottom < 0:
+            leaves.remove(leaf)
 
     # Immediately after everything has been moved deal with any collisions
     check_collisions(surfaces, jack, enemies)
@@ -91,12 +108,6 @@ def update_positions(w_settings, surfaces, ranged_attacks, jack, enemies):
     if jack.ranged_is_created:
         ranged_attacks.add(jack.create_ranged_attack())
 
-    # Move all ranged attacks
-    for ranged_attack in ranged_attacks:
-        ranged_attack.update_position()
-        # Delete ranged attacks that have moved off the map
-        if ranged_attack.rect.right < 0 or ranged_attack.rect.left > w_settings.screen_width:
-            ranged_attacks.remove(ranged_attack)
 
 # Deal with any collisions between objects and characters
 def check_collisions(surfaces, jack, enemies):
@@ -114,13 +125,13 @@ def update_animations(cur_time, ranged_attacks, jack, enemies):
     jack.update_animation()
 
     for enemy in enemies:
-        enemy.update_animation()
+        enemy.update_animation(cur_time)
 
     for ranged_attack in ranged_attacks:
         ranged_attack.update_animation(cur_time)
 
 # Display a new screen based on all object locations
-def update_screen(screen, UI, bg_blocks, surfaces, ranged_attacks, jack, enemies):
+def update_screen(screen, UI, bg_blocks, surfaces, ranged_attacks, leaves, jack, enemies):
     # Wipe the current screen
     screen.new_frame()
 
@@ -140,7 +151,11 @@ def update_screen(screen, UI, bg_blocks, surfaces, ranged_attacks, jack, enemies
     # Next the player's character
     jack.blit_me(screen)
 
-    # Next the attacks
+    # Next the enemies attacks
+    for leaf in leaves:
+        screen.blit_obj(leaf)
+
+    # Next the player's attacks
     for ranged_attack in ranged_attacks:
         screen.blit_obj(ranged_attack)
 

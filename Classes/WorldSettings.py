@@ -81,6 +81,9 @@ class WorldSettings(object):
         # Twisted Lumber delays
         self.TL_wait_period = 1000
         self.TL_jump_period = 2000
+        self.TL_leaf_dart_period = 2000
+        self.TL_leaf_dart_part1_period = int(self.TL_leaf_dart_period / 2)
+        self.TL_leaf_dart_wait_period = self.TL_leaf_dart_part1_period
 
         """ Load non-animated images """
         # Jack Lumber images
@@ -290,3 +293,4 @@ class WorldSettings(object):
         # Twisted Lumber speeds
         self.TL_init_jump_vel = self.JL_init_jump_vel
         self.TL_x_vel = self.JL_x_vel
+        self.TL_leaf_dart_speed = self.JL_ranged_vel
