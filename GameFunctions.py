@@ -98,7 +98,7 @@ def update_positions(w_settings, surfaces, ranged_attacks, leaves, jack, enemies
     for leaf in leaves:
         leaf.update_pos(cur_time)
         # Delete leaves that have moved off the screen
-        if leaf.rect.right < 0 or leaf.rect.left > w_settings.screen_width or leaf.rect.top > w_settings.screen_height or leaf.rect.bottom < 0:
+        if leaf.ready_to_delete():
             leaves.remove(leaf)
 
     # Immediately after everything has been moved deal with any collisions

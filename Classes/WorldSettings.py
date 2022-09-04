@@ -79,11 +79,13 @@ class WorldSettings(object):
         self.JL_damaged_invinc_period = 1000
 
         # Twisted Lumber delays
-        self.TL_wait_period = 1000
-        self.TL_jump_period = 2000
-        self.TL_leaf_dart_period = 2000
-        self.TL_leaf_dart_part1_period = int(self.TL_leaf_dart_period / 2)
+        self.TL_wait_period = 500
+        self.TL_jump_period = 1000
+        self.TL_leaf_dart_period = 1500
+        self.TL_leaf_dart_part1_period = int(self.TL_leaf_dart_period * 2 / 3)
         self.TL_leaf_dart_wait_period = self.TL_leaf_dart_part1_period
+        self.TL_leaf_spiral_period = int(self.TL_leaf_dart_period * 2)
+        self.TL_leaf_spiral_part1_period = int(self.TL_leaf_spiral_period / 2)
 
         """ Load non-animated images """
         # Jack Lumber images
@@ -294,3 +296,6 @@ class WorldSettings(object):
         self.TL_init_jump_vel = self.JL_init_jump_vel
         self.TL_x_vel = self.JL_x_vel
         self.TL_leaf_dart_speed = self.JL_ranged_vel
+        self.TL_leaf_spiral_angle_vel = 0.1
+        self.TL_leaf_spiral_init_radius_accel = 0.05
+        self.TL_leaf_spiral_radius_accel = self.TL_leaf_spiral_init_radius_accel * 10
