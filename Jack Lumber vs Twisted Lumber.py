@@ -53,7 +53,7 @@ def vs_Twisted_Lumber():
             cur_time = pygame.time.get_ticks()
             run = gf.check_events(joystick, jack)
             gf.update_character_inputs(cur_time, jack)
-            gf.update_ai(cur_time, leaves, jack, enemies)
+            gf.update_ai(cur_time, surfaces, leaves, jack, enemies)
             gf.update_positions(w_settings, surfaces, ranged_attacks, leaves, jack, enemies, cur_time)
             gf.update_animations(cur_time, ranged_attacks, jack, enemies)
             gf.update_screen(screen, UI, bg_blocks, surfaces, ranged_attacks, leaves, jack, enemies)

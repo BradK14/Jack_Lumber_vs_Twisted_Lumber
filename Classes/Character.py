@@ -3,7 +3,6 @@ Character.py
 This file contains the class Character.  Character is a parent class used to define common characterstics that all characters in the game have.
 """
 
-import pygame
 from pygame.sprite import Sprite
 
 

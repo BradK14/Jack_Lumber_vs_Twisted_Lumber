@@ -7,7 +7,6 @@ Leaf Spiral has a leaf spiral around in a circle while slowly increasing velocit
 
 import math
 from Classes.Leaf import Leaf
-from Classes.Delay import Delay
 
 
 class LeafSpiral(Leaf):
@@ -19,9 +18,6 @@ class LeafSpiral(Leaf):
         self.radius = 0
         self.radius_vel = 0
         self.angle = start_angle
-
-        self.init_delay = Delay(self.w_settings.TL_leaf_spiral_part1_period)
-        self.init_delay.begin(cur_time)
 
     def update_pos(self, cur_time):
         # Determine the new radius

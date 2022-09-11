@@ -85,7 +85,11 @@ class WorldSettings(object):
         self.TL_leaf_dart_part1_period = int(self.TL_leaf_dart_period * 2 / 3)
         self.TL_leaf_dart_wait_period = self.TL_leaf_dart_part1_period
         self.TL_leaf_spiral_period = int(self.TL_leaf_dart_period * 2)
-        self.TL_leaf_spiral_part1_period = int(self.TL_leaf_spiral_period / 2)
+        self.TL_slow_leaf_period = int(self.TL_leaf_spiral_period / 2)
+        self.TL_falling_leaves_attack_period = self.TL_leaf_spiral_period
+        self.TL_ceiling_shake_period = 3000
+        self.TL_create_vine_period = 1  # Every Frame
+        self.TL_create_falling_leaf_period = 200
 
         """ Load non-animated images """
         # Jack Lumber images
@@ -295,6 +299,7 @@ class WorldSettings(object):
         # Twisted Lumber speeds
         self.TL_init_jump_vel = self.JL_init_jump_vel
         self.TL_x_vel = self.JL_x_vel
+        self.TL_vine_rise_vel = -25
         self.TL_leaf_dart_speed = self.JL_ranged_vel
         self.TL_leaf_spiral_angle_vel = 0.1
         self.TL_leaf_spiral_init_radius_accel = 0.05

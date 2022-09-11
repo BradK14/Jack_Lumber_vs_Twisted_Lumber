@@ -74,9 +74,12 @@ def keypresses(joystick, jack):
 def update_character_inputs(cur_time, jack):
     jack.determine_state(cur_time)
 
-def update_ai(cur_time, leaves, jack, enemies):
+def update_ai(cur_time, surfaces, leaves, jack, enemies):
     for enemy in enemies:
         enemy.decide_next_move(cur_time, leaves, jack)
+
+    for enemy in enemies:
+        enemy.update_attacks(cur_time, leaves)
 
 # Update the positions of all moving objects
 def update_positions(w_settings, surfaces, ranged_attacks, leaves, jack, enemies, cur_time):
@@ -112,7 +115,7 @@ def update_positions(w_settings, surfaces, ranged_attacks, leaves, jack, enemies
 # Deal with any collisions between objects and characters
 def check_collisions(surfaces, jack, enemies):
     check_character_to_surface_collision(surfaces, jack, enemies)
-
+    check_attack_collisions(surfaces, enemies)
 
 # Make sure characters do not overlap with surfaces like blocks
 def check_character_to_surface_collision(surfaces, jack, enemies):
@@ -120,6 +123,9 @@ def check_character_to_surface_collision(surfaces, jack, enemies):
     for enemy in enemies:
         enemy.check_surface_collisions(surfaces)
 
+def check_attack_collisions(surfaces, enemies):
+    for enemy in enemies:
+        enemy.check_collisions(surfaces)
 
 def update_animations(cur_time, ranged_attacks, jack, enemies):
     jack.update_animation()
@@ -146,7 +152,7 @@ def update_screen(screen, UI, bg_blocks, surfaces, ranged_attacks, leaves, jack,
 
     # Next the enemies
     for enemy in enemies:
-        screen.blit_obj(enemy)
+        enemy.blit_me(screen)
 
     # Next the player's character
     jack.blit_me(screen)
