@@ -25,6 +25,8 @@ class TwistedLumber(Character):
         # Apply constants from w_settings
         self.width = self.w_settings.TL_width
         self.height = self.w_settings.TL_height
+        self.max_health = self.w_settings.TL_health
+        self.health = self.max_health
 
         # Set up the image and rect
         if self.facing_left:
@@ -100,7 +102,7 @@ class TwistedLumber(Character):
             else:
                 self.image = self.w_settings.TL_right_image
 
-    def check_collisions(self, surfaces):
+    def check_attack_collisions(self, surfaces):
         if self.newest_vine is None:
             pass
         elif self.creating_vines:

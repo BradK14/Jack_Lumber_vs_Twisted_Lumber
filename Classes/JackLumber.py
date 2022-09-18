@@ -22,6 +22,8 @@ class JackLumber(Character):
         self.height = self.w_settings.JL_height
         self.x_vel = self.w_settings.JL_x_vel
         self.dash_vel = self.w_settings.JL_dash_vel
+        self.max_health = self.w_settings.JL_health
+        self.health = self.max_health
 
         # Set up the image and rect
         if self.facing_left:
@@ -416,11 +418,32 @@ class JackLumber(Character):
         self.rect.x = int(self.x)
         self.rect.y = int(self.y)
 
-    def check_surface_collisions(self, surfaces):
+    # Reposition slightly if overlapped with enemy
+    def check_collision_with_enemy(self, enemy):
+        if self.rect.colliderect(enemy.rect):
+            if self.rect.centerx <= enemy.rect.centerx:  # Push Jack to left
+                distance = self.rect.right - enemy.rect.left
+                self.x -= distance / 2
+            else:  # Push Jack to right
+                distance = enemy.rect.right - self.rect.left
+                self.x += distance / 2
+            self.rect.x = int(self.x)
+
+    # Last point in frame that involves repositioning
+    def check_surface_collisions(self, surfaces, ranged_attacks=None):
         super(JackLumber, self).check_surface_collisions(surfaces)
         # Move melee attack with Jack Lumber
         if self.melee is not None:
             self.melee.reposition(self.rect, self.facing_left)
+        # Or if attempting to create a ranged attack, create it now that we have Jack's final position for this frame
+        if self.ranged_is_created and ranged_attacks is not None:
+            ranged_attacks.add(self.create_ranged_attack())
+
+    # Check to see if we've been hit by an attack
+    def check_attack_collisions(self, leaves):
+        for leaf in leaves:
+            if self.rect.colliderect(leaf.rect):
+                pass  # TODO: Implement damage reaction
 
     # Addition to limit dash to once per jump (infinite while on the ground)
     def on_top_of_surface(self, surface):

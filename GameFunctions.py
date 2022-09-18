@@ -74,7 +74,7 @@ def keypresses(joystick, jack):
 def update_character_inputs(cur_time, jack):
     jack.determine_state(cur_time)
 
-def update_ai(cur_time, surfaces, leaves, jack, enemies):
+def update_ai(cur_time, leaves, jack, enemies):
     for enemy in enemies:
         enemy.decide_next_move(cur_time, leaves, jack)
 
@@ -105,27 +105,29 @@ def update_positions(w_settings, surfaces, ranged_attacks, leaves, jack, enemies
             leaves.remove(leaf)
 
     # Immediately after everything has been moved deal with any collisions
-    check_collisions(surfaces, jack, enemies)
-
-    # After Jack's position has been determined create his ranged attack if he is creating one
-    if jack.ranged_is_created:
-        ranged_attacks.add(jack.create_ranged_attack())
-
+    check_collisions(surfaces, ranged_attacks, leaves, jack, enemies)
 
 # Deal with any collisions between objects and characters
-def check_collisions(surfaces, jack, enemies):
-    check_character_to_surface_collision(surfaces, jack, enemies)
-    check_attack_collisions(surfaces, enemies)
+def check_collisions(surfaces, ranged_attacks, leaves, jack, enemies):
+    check_character_to_character_collisions(jack, enemies)  # Less important position changes first
+    check_character_to_surface_collision(surfaces, ranged_attacks, jack, enemies)  # Most important position changes last
+    check_attack_collisions(surfaces, leaves, jack, enemies)  # Damage and state change checks
+
+# Change position to keep characters from overlapping
+def check_character_to_character_collisions(jack, enemies):
+    for enemy in enemies:
+        jack.check_collision_with_enemy(enemy)
 
 # Make sure characters do not overlap with surfaces like blocks
-def check_character_to_surface_collision(surfaces, jack, enemies):
-    jack.check_surface_collisions(surfaces)
+def check_character_to_surface_collision(surfaces, ranged_attacks, jack, enemies):
+    jack.check_surface_collisions(surfaces, ranged_attacks)
     for enemy in enemies:
         enemy.check_surface_collisions(surfaces)
 
-def check_attack_collisions(surfaces, enemies):
+def check_attack_collisions(surfaces, leaves, jack, enemies):
+    jack.check_attack_collisions(leaves)
     for enemy in enemies:
-        enemy.check_collisions(surfaces)
+        enemy.check_attack_collisions(surfaces)
 
 def update_animations(cur_time, ranged_attacks, jack, enemies):
     jack.update_animation()
@@ -137,7 +139,7 @@ def update_animations(cur_time, ranged_attacks, jack, enemies):
         ranged_attack.update_animation(cur_time)
 
 # Display a new screen based on all object locations
-def update_screen(screen, UI, bg_blocks, surfaces, ranged_attacks, leaves, jack, enemies):
+def update_screen(screen, UI, bg_blocks, surfaces, ranged_attacks, leaves, jack, boss, enemies):
     # Wipe the current screen
     screen.new_frame()
 
@@ -166,7 +168,7 @@ def update_screen(screen, UI, bg_blocks, surfaces, ranged_attacks, leaves, jack,
         screen.blit_obj(ranged_attack)
 
     # Last the user interface
-    UI.display(screen, jack)
+    UI.display(screen, jack, boss)
 
     # Display everything in full screen
     screen.display_frame()

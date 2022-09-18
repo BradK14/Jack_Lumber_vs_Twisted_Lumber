@@ -20,15 +20,15 @@ def create_bg_blocks(w_settings, bg_blocks, x, y, width, height):
 
 """ Maps """
 # Map 1
-def load_map(w_settings, bg_blocks, surfaces, jack, enemies):
+def load_map(w_settings, bg_blocks, surfaces, jack, boss):
     # Background
     create_bg_blocks(w_settings, bg_blocks, 0, 0, 60, 34)
 
     # Foreground
     surfaces.add(Surface(w_settings, 0, 1016, 60, 2))  # Floor
     surfaces.add(Surface(w_settings, 0, 0, 60, 2))  # Ceiling
-    surfaces.add(Surface(w_settings, 0, 64, 2, 30))  # Left wall
-    surfaces.add(Surface(w_settings, 1856, 64, 2, 30))  # Right wall
+    surfaces.add(Surface(w_settings, -64, 64, 4, 30))  # Left wall
+    surfaces.add(Surface(w_settings, 1856, 64, 4, 30))  # Right wall
 
     # Position Jack Lumber
     jack.x = 300
@@ -36,5 +36,8 @@ def load_map(w_settings, bg_blocks, surfaces, jack, enemies):
     jack.rect.x = 300
     jack.rect.y = 300
 
-    # Create and place a Twisted Lumber enemy
-    enemies.add(TwistedLumber(w_settings, 1856 - (w_settings.TL_width * 2), 1016 - w_settings.TL_height, True))
+    # Position the Boss
+    boss.x = 1856 - (w_settings.TL_width * 2)
+    boss.y = 1016 - w_settings.TL_height
+    boss.rect.x = int(boss.x)
+    boss.rect.y = int(boss.y)

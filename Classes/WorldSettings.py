@@ -44,6 +44,10 @@ class WorldSettings(object):
         self.charge_D_width = self.charge_M_width
         self.charge_D_height = self.charge_M_width
 
+        # UI related sizes
+        self.text_width = int(self.buom * 2)
+        self.text_height = self.text_width
+
         # Twisted Lumber's size
         self.TL_width = int(self.JL_width * 2)
         self.TL_height = int(self.TL_width * 2)
@@ -113,6 +117,18 @@ class WorldSettings(object):
         self.charge_M_image = pygame.transform.scale(pygame.image.load('Images/Charge Display-M.png'), (self.charge_M_width, self.charge_M_height))
         self.charge_R_image = pygame.transform.scale(pygame.image.load('Images/Charge Display-R.png'), (self.charge_R_width, self.charge_R_height))
         self.charge_D_image = pygame.transform.scale(pygame.image.load('Images/Charge Display-D.png'), (self.charge_D_width, self.charge_D_height))
+
+        # UI related images
+        self.num_0_image = pygame.transform.scale(pygame.image.load('Images/Num_0.png'), (self.text_width, self.text_height))
+        self.num_1_image = pygame.transform.scale(pygame.image.load('Images/Num_1.png'), (self.text_width, self.text_height))
+        self.num_2_image = pygame.transform.scale(pygame.image.load('Images/Num_2.png'), (self.text_width, self.text_height))
+        self.num_3_image = pygame.transform.scale(pygame.image.load('Images/Num_3.png'), (self.text_width, self.text_height))
+        self.num_4_image = pygame.transform.scale(pygame.image.load('Images/Num_4.png'), (self.text_width, self.text_height))
+        self.num_5_image = pygame.transform.scale(pygame.image.load('Images/Num_5.png'), (self.text_width, self.text_height))
+        self.num_6_image = pygame.transform.scale(pygame.image.load('Images/Num_6.png'), (self.text_width, self.text_height))
+        self.num_7_image = pygame.transform.scale(pygame.image.load('Images/Num_7.png'), (self.text_width, self.text_height))
+        self.num_8_image = pygame.transform.scale(pygame.image.load('Images/Num_8.png'), (self.text_width, self.text_height))
+        self.num_9_image = pygame.transform.scale(pygame.image.load('Images/Num_9.png'), (self.text_width, self.text_height))
 
         # Foreground block image
         self.GrassyBlock_image = pygame.transform.scale(pygame.image.load('Images/Grassy Block.png'), (self.GrassyBlock_width, self.GrassyBlock_height))
@@ -304,3 +320,8 @@ class WorldSettings(object):
         self.TL_leaf_spiral_angle_vel = 0.1
         self.TL_leaf_spiral_init_radius_accel = 0.05
         self.TL_leaf_spiral_radius_accel = self.TL_leaf_spiral_init_radius_accel * 10
+
+        """ Character stats (Health, damage, etc) """
+        # Starting Health
+        self.JL_health = 100
+        self.TL_health = 100

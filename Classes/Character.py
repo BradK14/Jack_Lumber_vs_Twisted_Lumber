@@ -23,6 +23,8 @@ class Character(Sprite):
         self.y_velocity = 0
 
         # Dummy variables that are to be changed by child classes
+        self.max_health = 0
+        self.health = self.max_health
         self.width = 0
         self.height = 0
         self.image = None
