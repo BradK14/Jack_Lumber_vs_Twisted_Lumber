@@ -172,7 +172,7 @@ class JackLumber(Character):
             # Allow regular movement
             self.set_regular_movement_states()
             # If dashing previously, cancel it and turn on air dash
-            if self.cur_delay_is_active():
+            if self.cur_delay_is_active() and not self.being_damaged:
                 self.reset_cur_delay()
                 self.dashing_x = False
                 self.dashing_up = False
@@ -183,7 +183,7 @@ class JackLumber(Character):
                 self.grounded_dashing = False
                 self.air_dashing = True
             # Check if we are able to attack
-            if not self.attack_delay_is_active():
+            if not self.attack_delay_is_active() and not self.being_damaged:
                 self.reset_attack_delay()
                 if self.melee_pressed:
                     if self.melee_charged:
@@ -266,7 +266,7 @@ class JackLumber(Character):
                 self.air_dashing = True
                 self.y_velocity = 0
             # Enter dash stage 1 or immediately dash
-            elif self.dash_pressed and self.dash_ready:
+            elif self.dash_pressed and self.dash_ready and not self.being_damaged:
                 self.dash_ready = False
                 if self.grounded:
                     self.grounded_dashing = True
@@ -280,6 +280,8 @@ class JackLumber(Character):
                     self.moving_x = False
             else:  # Regular movement allowed, and attacks are allowed
                 self.set_regular_movement_states()
+                self.invincible = False
+                self.being_damaged = False
 
     # Helper functions to reset our delay variables to None
     def reset_cur_delay(self):
@@ -363,8 +365,16 @@ class JackLumber(Character):
 
     """ Character movement """
     def update_pos(self):  # Overrides parents (Character) update_pos function
+        # Being hit by an attack
+        if self.being_damaged:
+            if self.facing_left:
+                self.x += self.w_settings.JL_damaged_x_vel
+            else:
+                self.x -= self.w_settings.JL_damaged_x_vel
+            self.y_velocity += self.w_settings.fall_acceleration
+            self.y += self.y_velocity
         # Beginning a dash or in dash stage 2
-        if self.dash_stage_1 or self.dash_stage_2:
+        elif self.dash_stage_1 or self.dash_stage_2:
             self.y_velocity = 0
         # Dashing in some direction
         elif self.dashing:
@@ -441,9 +451,28 @@ class JackLumber(Character):
 
     # Check to see if we've been hit by an attack
     def check_attack_collisions(self, leaves):
-        for leaf in leaves:
-            if self.rect.colliderect(leaf.rect):
-                pass  # TODO: Implement damage reaction
+        if not self.invincible:
+            for leaf in leaves:
+                if self.rect.colliderect(leaf.rect):
+                    self.being_damaged = True
+                    self.invincible = True
+                    self.moving_x = False
+                    self.dashing_x = False
+                    self.dashing_up = False
+                    self.dashing_down = False
+                    self.air_dashing = False
+                    self.dash_stage_1 = False
+                    self.dash_stage_2 = False
+                    self.dashing = False
+                    if leaf.facing_left:
+                        self.facing_left = False
+                    else:
+                        self.facing_left = True
+                    self.reset_cur_delay()
+                    self.cur_delay = self.damage_reaction_delay
+                    self.cur_delay.begin(self.cur_time)
+                    self.health -= leaf.damage
+                    break
 
     # Addition to limit dash to once per jump (infinite while on the ground)
     def on_top_of_surface(self, surface):
@@ -487,8 +516,14 @@ class JackLumber(Character):
 
     """ Animations """
     def update_animation(self):
+        # Taking damage
+        if self.being_damaged:
+            if self.facing_left:
+                self.image = self.w_settings.JL_damaged_left_image
+            else:
+                self.image = self.w_settings.JL_damaged_right_image
         # Dash stage 1
-        if self.dash_stage_1:
+        elif self.dash_stage_1:
             if self.facing_left:
                 if self.cur_anim != self.dash_stage_1_left_anim:
                     self.cur_anim.reset()

@@ -68,7 +68,7 @@ class WorldSettings(object):
 
         """ Timed delays for characters, objects, and gameplay events """
         # Only one of these Jack lumber delays can be active at once
-        self.JL_damage_reaction_period = 500
+        self.JL_damage_reaction_period = 150
         self.JL_dash_stage_1_period = 300
         self.JL_dash_stage_2_period = 800
         self.JL_dashing_period = 300
@@ -80,7 +80,7 @@ class WorldSettings(object):
         self.JL_charge_M_period = 1000
         self.JL_charge_R_period = 1000
         self.JL_charge_D_period = 1000
-        self.JL_damaged_invinc_period = 1000
+        self.JL_damaged_invinc_period = int(self.JL_damage_reaction_period * 2)
 
         # Twisted Lumber delays
         self.TL_wait_period = 500
@@ -103,6 +103,8 @@ class WorldSettings(object):
         self.JL_jump_right_image = pygame.transform.flip(self.JL_jump_left_image, True, False)
         self.JL_dash_stage_2_left_image = pygame.transform.scale(pygame.image.load('Images/Jack Lumber invincidash-4.png'), (self.JL_width, self.JL_height))
         self.JL_dash_stage_2_right_image = pygame.transform.flip(self.JL_dash_stage_2_left_image, True, False)
+        self.JL_damaged_left_image = pygame.transform.scale(pygame.image.load('Images/Jack Lumber taking damage.png'), (self.JL_width, self.JL_height))
+        self.JL_damaged_right_image = pygame.transform.flip(self.JL_damaged_left_image, True, False)
 
         # Twisted Lumber images
         self.TL_left_image = pygame.transform.scale(pygame.image.load('Images/Twisted Lumber-1.png'), (self.TL_width, self.TL_height))
@@ -308,6 +310,7 @@ class WorldSettings(object):
         self.JL_init_jump_vel = -55  # Just enough to get him a little higher than his height
         self.JL_x_vel = 20
         self.JL_dash_vel = self.JL_x_vel * 2
+        self.JL_damaged_x_vel = 20
 
         # Ranged attack speed
         self.JL_ranged_vel = 60
@@ -325,3 +328,6 @@ class WorldSettings(object):
         # Starting Health
         self.JL_health = 100
         self.TL_health = 100
+
+        # Attack damage
+        self.TL_leaf_damage = 10

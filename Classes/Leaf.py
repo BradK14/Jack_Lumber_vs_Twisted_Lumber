@@ -17,6 +17,7 @@ class Leaf(Sprite):
         self.x = x
         self.y = y
         self.facing_left = facing_left
+        self.damage = self.w_settings.TL_leaf_damage
 
         # Create rect and image
         self.rect = pygame.Rect(self.x, self.y, self.w_settings.TL_leaf_width, self.w_settings.TL_leaf_height)
