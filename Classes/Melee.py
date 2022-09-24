@@ -6,6 +6,7 @@ Melee is to be used within the JackLumber class.  It represents his melee attack
 
 import pygame
 from pygame.sprite import Sprite
+from pygame.sprite import Group
 from Classes.Animation import Animation
 
 
@@ -18,6 +19,7 @@ class Melee(Sprite):
         # Set up for these variables is different with child class
         self.width = 0
         self.height = 0
+        self.damage = 0
         self.anim = None
 
         self.set_up()
@@ -32,14 +34,29 @@ class Melee(Sprite):
         # Set up the rect
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
 
+        # Keep a list of enemies already damaged by this attack
+        self.enemies = Group()
+
     def set_up(self):
         self.width = self.w_settings.JL_melee_width
         self.height = self.w_settings.JL_melee_height
+        self.damage = self.w_settings.JL_melee_damage
 
         self.anim = Animation(self.w_settings.JL_melee_left_anim,
                               self.w_settings.JL_melee_anim_size,
                               self.w_settings.JL_melee_anim_rates,
                               self.w_settings.JL_melee_right_anim)
+
+    def damage_once(self, enemy):
+        do_damage = True
+        for e in self.enemies:
+            if enemy is e:
+                do_damage = False
+                break
+
+        if do_damage:
+            enemy.health -= self.damage
+            self.enemies.add(enemy)
 
     def reposition(self, jack_rect, facing_left):
         self.facing_left = facing_left

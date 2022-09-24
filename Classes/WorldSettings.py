@@ -330,4 +330,8 @@ class WorldSettings(object):
         self.TL_health = 100
 
         # Attack damage
+        self.JL_ranged_damage = 1
+        self.JL_charged_ranged_damage = int(self.JL_ranged_damage * 4)
+        self.JL_melee_damage = int(self.JL_ranged_damage * 3)
+        self.JL_charged_melee_damage = int(self.JL_melee_damage * 2)
         self.TL_leaf_damage = 10

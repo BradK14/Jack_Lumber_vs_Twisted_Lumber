@@ -102,7 +102,8 @@ class TwistedLumber(Character):
             else:
                 self.image = self.w_settings.TL_right_image
 
-    def check_attack_collisions(self, surfaces):
+    def check_attack_collisions(self, surfaces, ranged_attacks, melee_attack):
+        # For creating a vine
         if self.newest_vine is None:
             pass
         elif self.creating_vines:
@@ -113,6 +114,20 @@ class TwistedLumber(Character):
                     self.rising_by_vines = True
                     self.grounded = False
                     break
+
+        # For taking damage from Jack's melee attacks
+        if melee_attack is not None:
+            if self.rect.colliderect(melee_attack.rect):
+                melee_attack.damage_once(self)
+
+        # For taking damage from Jack's ranged attacks
+        for ranged_attack in ranged_attacks:
+            if self.rect.colliderect(ranged_attack.rect):
+                ranged_attack.damage_once(self)
+
+        # Check to see if Twisted Lumber is dead
+        if self.health <= 0:
+            self.health = 0
 
     def decide_next_move(self, cur_time, leaves, jack=None):
         # Set the time
@@ -139,19 +154,19 @@ class TwistedLumber(Character):
 
                 # Choose an action at random
                 randchoice = randint(1, 100)
-                if randchoice <= 0:  # 0% chance to do nothing 0
+                if randchoice <= 10:  # 10% chance to do nothing 10
                     self.cur_delay = self.wait_delay
                     self.wait()
-                elif randchoice <= 20:  # 20% chance to jump towards Jack: 20
+                elif randchoice <= 35:  # 25% chance to jump towards Jack: 35
                     self.cur_delay = self.jump_delay
                     self.jump()
-                elif randchoice <= 40:  # 20% chance to fire a leaf towards Jack: 40
+                elif randchoice <= 65:  # 30% chance to fire a leaf towards Jack: 65
                     self.cur_delay = self.leaf_dart_delay
                     self.leaf_dart(cur_time, leaves)
-                elif randchoice <= 55:  # 15% chance to send out a spiral of leaves: 55
+                elif randchoice <= 85:  # 20% chance to send out a spiral of leaves: 85
                     self.cur_delay = self.leaf_spiral_delay
                     self.leaf_spiral(cur_time, leaves)
-                elif randchoice > 55:  # 45% chance to send out a vine to the ceiling to make leaves rain down:
+                elif randchoice > 85:  # 15% chance to send out a vine to the ceiling to make leaves rain down
                     self.cur_delay = self.falling_leaves_attack_delay
                     self.falling_leaves_attack(cur_time)
 

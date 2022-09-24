@@ -111,7 +111,7 @@ def update_positions(w_settings, surfaces, ranged_attacks, leaves, jack, enemies
 def check_collisions(surfaces, ranged_attacks, leaves, jack, enemies):
     check_character_to_character_collisions(jack, enemies)  # Less important position changes first
     check_character_to_surface_collision(surfaces, ranged_attacks, jack, enemies)  # Most important position changes last
-    check_attack_collisions(surfaces, leaves, jack, enemies)  # Damage and state change checks
+    check_attack_collisions(surfaces, ranged_attacks, leaves, jack, enemies)  # Damage and state change checks
 
 # Change position to keep characters from overlapping
 def check_character_to_character_collisions(jack, enemies):
@@ -124,10 +124,13 @@ def check_character_to_surface_collision(surfaces, ranged_attacks, jack, enemies
     for enemy in enemies:
         enemy.check_surface_collisions(surfaces)
 
-def check_attack_collisions(surfaces, leaves, jack, enemies):
+# Damage and state changes due to attacks can be found here
+def check_attack_collisions(surfaces, ranged_attacks, leaves, jack, enemies):
     jack.check_attack_collisions(leaves)
     for enemy in enemies:
-        enemy.check_attack_collisions(surfaces)
+        enemy.check_attack_collisions(surfaces, ranged_attacks, jack.melee)
+        if enemy.health <= 0:
+            enemies.remove(enemy)
 
 def update_animations(cur_time, ranged_attacks, jack, enemies):
     jack.update_animation()

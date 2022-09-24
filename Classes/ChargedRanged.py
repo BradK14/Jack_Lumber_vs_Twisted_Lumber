@@ -16,6 +16,7 @@ class ChargedRanged(Ranged):
     def set_up(self):
         self.width = self.w_settings.JL_charged_ranged_width
         self.height = self.w_settings.JL_charged_ranged_height
+        self.damage = self.w_settings.JL_charged_ranged_damage
 
         self.anim = Animation(self.w_settings.JL_charged_ranged_left_anim,
                               self.w_settings.JL_ranged_anim_size,

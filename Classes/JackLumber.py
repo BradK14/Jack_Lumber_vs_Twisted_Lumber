@@ -113,6 +113,7 @@ class JackLumber(Character):
         self.ranged_charged = False
         self.ranged_is_created = False  # Checked by the main loop to know whether or not to create a ranged attack
         self.invincible = False
+        self.dead = False
 
     def left_press(self, left_pressed):
         self.left_pressed = left_pressed
@@ -142,6 +143,10 @@ class JackLumber(Character):
 
         # Reset temporary markers
         self.charged_melee_attacking = False
+
+        # When dead, don't do anything
+        if self.dead:
+            return
 
         # Check if jump button has been released since the last jump
         if not self.jump_pressed:
@@ -366,7 +371,10 @@ class JackLumber(Character):
     """ Character movement """
     def update_pos(self):  # Overrides parents (Character) update_pos function
         # Being hit by an attack
-        if self.being_damaged:
+        if self.dead:
+            self.y_velocity += self.w_settings.fall_acceleration
+            self.y += self.y_velocity
+        elif self.being_damaged:
             if self.facing_left:
                 self.x += self.w_settings.JL_damaged_x_vel
             else:
@@ -451,28 +459,43 @@ class JackLumber(Character):
 
     # Check to see if we've been hit by an attack
     def check_attack_collisions(self, leaves):
-        if not self.invincible:
+        if not self.invincible and not self.dead:
             for leaf in leaves:
                 if self.rect.colliderect(leaf.rect):
-                    self.being_damaged = True
-                    self.invincible = True
-                    self.moving_x = False
-                    self.dashing_x = False
-                    self.dashing_up = False
-                    self.dashing_down = False
-                    self.air_dashing = False
-                    self.dash_stage_1 = False
-                    self.dash_stage_2 = False
-                    self.dashing = False
-                    if leaf.facing_left:
-                        self.facing_left = False
+                    if self.health - leaf.damage <= 0:
+                        self.health = 0
+                        self.dead = True
+                        height = self.height
+                        self.height = self.width
+                        self.width = height
+                        self.rect.height = self.height
+                        self.rect.width = self.width
+                        # Get rid of the ability to charge attacks
+                        self.melee_charged = False
+                        self.ranged_charged = False
+                        self.M_delay.reset()
+                        self.R_delay.reset()
+                        break
                     else:
-                        self.facing_left = True
-                    self.reset_cur_delay()
-                    self.cur_delay = self.damage_reaction_delay
-                    self.cur_delay.begin(self.cur_time)
-                    self.health -= leaf.damage
-                    break
+                        self.health -= leaf.damage
+                        self.being_damaged = True
+                        self.invincible = True
+                        self.moving_x = False
+                        self.dashing_x = False
+                        self.dashing_up = False
+                        self.dashing_down = False
+                        self.air_dashing = False
+                        self.dash_stage_1 = False
+                        self.dash_stage_2 = False
+                        self.dashing = False
+                        if leaf.facing_left:
+                            self.facing_left = False
+                        else:
+                            self.facing_left = True
+                        self.reset_cur_delay()
+                        self.cur_delay = self.damage_reaction_delay
+                        self.cur_delay.begin(self.cur_time)
+                        break
 
     # Addition to limit dash to once per jump (infinite while on the ground)
     def on_top_of_surface(self, surface):
@@ -516,8 +539,14 @@ class JackLumber(Character):
 
     """ Animations """
     def update_animation(self):
+        # When dead
+        if self.dead:
+            if self.facing_left:
+                self.image = pygame.transform.rotate(self.w_settings.JL_left_image, 90)
+            else:
+                self.image = pygame.transform.rotate(self.w_settings.JL_right_image, 270)
         # Taking damage
-        if self.being_damaged:
+        elif self.being_damaged:
             if self.facing_left:
                 self.image = self.w_settings.JL_damaged_left_image
             else:

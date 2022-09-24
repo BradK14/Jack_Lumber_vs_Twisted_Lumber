@@ -16,6 +16,7 @@ class ChargedMelee(Melee):
     def set_up(self):
         self.width = self.w_settings.JL_charged_melee_width
         self.height = self.w_settings.JL_charged_melee_height
+        self.damage = self.w_settings.JL_charged_melee_damage
 
         self.anim = Animation(self.w_settings.JL_charged_melee_left_anim,
                               self.w_settings.JL_melee_anim_size,
