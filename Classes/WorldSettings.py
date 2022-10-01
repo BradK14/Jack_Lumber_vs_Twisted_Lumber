@@ -72,14 +72,14 @@ class WorldSettings(object):
         self.JL_dash_stage_1_period = 300
         self.JL_dash_stage_2_period = 800
         self.JL_dashing_period = 300
-        self.JL_melee_period = 300
+        self.JL_ranged_period = 200
+        self.JL_melee_period = int(4 * self.JL_ranged_period / 3)
         self.JL_melee_life_period = int(self.JL_melee_period / 3)
-        self.JL_ranged_period = int(self.JL_melee_period * 2 / 3)
 
-        # These delays can happen at the same time
-        self.JL_charge_M_period = 1000
-        self.JL_charge_R_period = 1000
-        self.JL_charge_D_period = 1000
+        # These Jack Lumber delays can happen at the same time
+        self.JL_charge_M_period = int(6 * self.JL_melee_period)
+        self.JL_charge_R_period = int(8 * self.JL_ranged_period)
+        self.JL_charge_D_period = 1600  # Not currently used
         self.JL_damaged_invinc_period = int(self.JL_damage_reaction_period * 2)
 
         # Twisted Lumber delays
@@ -118,7 +118,7 @@ class WorldSettings(object):
         # Charge notification images
         self.charge_M_image = pygame.transform.scale(pygame.image.load('Images/Charge Display-M.png'), (self.charge_M_width, self.charge_M_height))
         self.charge_R_image = pygame.transform.scale(pygame.image.load('Images/Charge Display-R.png'), (self.charge_R_width, self.charge_R_height))
-        self.charge_D_image = pygame.transform.scale(pygame.image.load('Images/Charge Display-D.png'), (self.charge_D_width, self.charge_D_height))
+        self.charge_D_image = pygame.transform.scale(pygame.image.load('Images/Charge Display-D.png'), (self.charge_D_width, self.charge_D_height))  # Not currently used
 
         # UI related images
         self.num_0_image = pygame.transform.scale(pygame.image.load('Images/Num_0.png'), (self.text_width, self.text_height))
@@ -179,7 +179,7 @@ class WorldSettings(object):
         self.JL_invincidash_stage_2_right_anim = (pygame.transform.flip(self.JL_invincidash_stage_2_left_anim[0], True, False),
                                                   pygame.transform.flip(self.JL_invincidash_stage_2_left_anim[1], True, False))
         self.JL_invincidash_stage_2_anim_size = 2
-        self.JL_invincidash_stage_2_anim_rates = (90, 90)
+        self.JL_invincidash_stage_2_anim_rates = (60, 60)
 
         # Jack Lumber final invincidash animation
         self.JL_invincidash_left_anim = (pygame.transform.scale(pygame.image.load('Images/Jack Lumber Invincijump-1.png'),
@@ -189,7 +189,7 @@ class WorldSettings(object):
         self.JL_invincidash_right_anim = (pygame.transform.flip(self.JL_invincidash_left_anim[0], True, False),
                                           pygame.transform.flip(self.JL_invincidash_left_anim[1], True, False))
         self.JL_invincidash_anim_size = 2
-        self.JL_invincidash_anim_rates = (90, 90)
+        self.JL_invincidash_anim_rates = (60, 60)
 
         # Jack Lumber's melee and charged melee attack animations
         self.JL_melee_right_anim = (pygame.transform.scale(pygame.image.load('Images/Jack Lumber Melee-1.png'),
@@ -320,7 +320,7 @@ class WorldSettings(object):
         self.TL_x_vel = self.JL_x_vel
         self.TL_vine_rise_vel = -25
         self.TL_leaf_dart_speed = self.JL_ranged_vel
-        self.TL_leaf_spiral_angle_vel = 0.1
+        self.TL_leaf_spiral_angle_vel = 0.15
         self.TL_leaf_spiral_init_radius_accel = 0.05
         self.TL_leaf_spiral_radius_accel = self.TL_leaf_spiral_init_radius_accel * 10
 
@@ -330,8 +330,11 @@ class WorldSettings(object):
         self.TL_health = 100
 
         # Attack damage
+        # Damage values for Jack Lumber's attacks: Ranged < Melee < Charged Ranged < Charged Melee
+        # DPS for Jack Lumber's attacks: Charged Ranged < Charged Melee < Ranged < Melee (1, 1.33.., 1.5, 2)
         self.JL_ranged_damage = 1
-        self.JL_charged_ranged_damage = int(self.JL_ranged_damage * 4)
-        self.JL_melee_damage = int(self.JL_ranged_damage * 3)
-        self.JL_charged_melee_damage = int(self.JL_melee_damage * 2)
+        self.JL_charged_ranged_damage = 16 * self.JL_ranged_damage / 3
+        self.JL_melee_damage = self.JL_ranged_damage * 16 / 9
+        self.JL_charged_melee_damage = self.JL_melee_damage * 4
+
         self.TL_leaf_damage = 10

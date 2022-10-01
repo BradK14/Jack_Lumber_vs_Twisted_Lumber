@@ -67,7 +67,7 @@ class JackLumber(Character):
 
         # Set up various delays
         self.damage_reaction_delay = Delay(self.w_settings.JL_damage_reaction_period)
-        self.damaged_invinc_delay = Delay(self.w_settings.JL_damaged_invinc_period)
+        self.damaged_invinc_delay = Delay(self.w_settings.JL_damaged_invinc_period)  # Not currently used
         self.dash_stage_1_delay = Delay(self.w_settings.JL_dash_stage_1_period)
         self.dash_stage_2_delay = Delay(self.w_settings.JL_dash_stage_2_period)
         self.dashing_delay = Delay(self.w_settings.JL_dashing_period)
@@ -112,7 +112,8 @@ class JackLumber(Character):
         self.melee_charged = False
         self.ranged_charged = False
         self.ranged_is_created = False  # Checked by the main loop to know whether or not to create a ranged attack
-        self.invincible = False
+        self.invincible = False  # Invincibility when damaged
+        self.dash_invinc = False  # Invincibility from being in dash stage 2 or dashing from stage 2
         self.dead = False
 
     def left_press(self, left_pressed):
@@ -173,11 +174,11 @@ class JackLumber(Character):
             self.melee_life_delay.reset()
 
         # Melee and Ranged attacks
-        if self.melee_pressed or self.ranged_pressed:
+        if (self.melee_pressed or self.ranged_pressed) and not self.being_damaged:
             # Allow regular movement
             self.set_regular_movement_states()
             # If dashing previously, cancel it and turn on air dash
-            if self.cur_delay_is_active() and not self.being_damaged:
+            if self.cur_delay_is_active():
                 self.reset_cur_delay()
                 self.dashing_x = False
                 self.dashing_up = False
@@ -188,7 +189,7 @@ class JackLumber(Character):
                 self.grounded_dashing = False
                 self.air_dashing = True
             # Check if we are able to attack
-            if not self.attack_delay_is_active() and not self.being_damaged:
+            if not self.attack_delay_is_active():
                 self.reset_attack_delay()
                 if self.melee_pressed:
                     if self.melee_charged:
@@ -234,6 +235,7 @@ class JackLumber(Character):
                 self.jump_pressed_already = True
                 self.reset_cur_delay()
                 self.dashing = False
+                self.dash_invinc = False
                 self.dashing_x = False
             # Cancel dash by releasing the direction that we are dashing in
             elif self.dashing:
@@ -243,6 +245,7 @@ class JackLumber(Character):
                         (self.dashing_x and not self.facing_left and not self.right_pressed):
                     self.reset_cur_delay()
                     self.dashing = False
+                    self.dash_invinc = False
                     self.dashing_up = False
                     self.dashing_down = False
                     self.dashing_x = False
@@ -255,16 +258,19 @@ class JackLumber(Character):
                 self.reset_cur_delay()
                 self.dash_stage_1 = False
                 self.dash_stage_2 = True
+                self.dash_invinc = True
                 self.cur_delay = self.dash_stage_2_delay
                 self.cur_delay.begin(self.cur_time)
             # Exit dash stage 2
             elif self.dash_stage_2:
                 self.reset_cur_delay()
                 self.dash_stage_2 = False
+                self.dash_invinc = False
             # Exit dashing
             elif self.dashing:
                 self.reset_cur_delay()
                 self.dashing = False
+                self.dash_invinc = False
                 self.dashing_up = False
                 self.dashing_down = False
                 self.dashing_x = False
@@ -286,6 +292,7 @@ class JackLumber(Character):
             else:  # Regular movement allowed, and attacks are allowed
                 self.set_regular_movement_states()
                 self.invincible = False
+                self.dash_invinc = False
                 self.being_damaged = False
 
     # Helper functions to reset our delay variables to None
@@ -459,7 +466,7 @@ class JackLumber(Character):
 
     # Check to see if we've been hit by an attack
     def check_attack_collisions(self, leaves):
-        if not self.invincible and not self.dead:
+        if not self.invincible and not self.dead and not self.dash_invinc:
             for leaf in leaves:
                 if self.rect.colliderect(leaf.rect):
                     if self.health - leaf.damage <= 0:
@@ -566,9 +573,15 @@ class JackLumber(Character):
         # Dash stage 2
         elif self.dash_stage_2:
             if self.facing_left:
-                self.image = self.w_settings.JL_dash_stage_2_left_image
+                if self.cur_anim != self.invincidash_stage_2_left_anim:
+                    self.cur_anim.reset()
+                    self.cur_anim = self.invincidash_stage_2_left_anim
+                self.image = self.cur_anim.play(self.cur_time)
             elif not self.facing_left:
-                self.image = self.w_settings.JL_dash_stage_2_right_image
+                if self.cur_anim != self.invincidash_stage_2_right_anim:
+                    self.cur_anim.reset()
+                    self.cur_anim = self.invincidash_stage_2_right_anim
+                self.image = self.cur_anim.play(self.cur_time)
         # Walking
         elif self.moving_x and self.grounded:
             if self.facing_left:
@@ -585,9 +598,21 @@ class JackLumber(Character):
             self.cur_anim.reset()
             # In the air
             if self.facing_left and not self.grounded:
-                self.image = self.w_settings.JL_jump_left_image
+                if self.dash_invinc:
+                    if self.cur_anim != self.invincidash_left_anim:
+                        self.cur_anim.reset()
+                        self.cur_anim = self.invincidash_left_anim
+                    self.image = self.cur_anim.play(self.cur_time)
+                else:
+                    self.image = self.w_settings.JL_jump_left_image
             elif not self.grounded:
-                self.image = self.w_settings.JL_jump_right_image
+                if self.dash_invinc:
+                    if self.cur_anim != self.invincidash_right_anim:
+                        self.cur_anim.reset()
+                        self.cur_anim = self.invincidash_right_anim
+                    self.image = self.cur_anim.play(self.cur_time)
+                else:
+                    self.image = self.w_settings.JL_jump_right_image
             # Standing still
             elif self.facing_left:
                 self.image = self.w_settings.JL_left_image

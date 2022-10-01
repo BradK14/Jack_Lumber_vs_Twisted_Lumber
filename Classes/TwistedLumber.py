@@ -238,13 +238,14 @@ class TwistedLumber(Character):
         self.firing_leaf_spiral = True
 
         # Eight leaves evenly spaced between each other while spiraling
-        for angle_pos in range(0, 8):
+        max_leaves = 20
+        for angle_pos in range(0, max_leaves):
             leaves.add(LeafSpiral(self.w_settings,
                                   self.rect.centerx,
                                   self.rect.centery,
                                   self.facing_left,
                                   cur_time,
-                                  math.radians(angle_pos * 45)))
+                                  math.radians(angle_pos * int(360 / max_leaves))))
 
     def falling_leaves_attack(self, cur_time):
         self.creating_vines = True
