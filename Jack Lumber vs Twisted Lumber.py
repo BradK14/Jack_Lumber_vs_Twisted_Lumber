@@ -18,7 +18,10 @@ def vs_Twisted_Lumber():
     # Initialize pygame modules
     pygame.init()
     pygame.joystick.init()
-    joystick = pygame.joystick.Joystick(0)
+    if pygame.joystick.get_count() > 0:
+        joystick = pygame.joystick.Joystick(0)
+    else:
+        joystick = None
 
     # Initialize the world settings and load assets
     w_settings = WorldSettings()

@@ -7,69 +7,163 @@ import pygame
 
 
 # Event Handling
-# Check for a quit event or event where escape is pressed, then pass it on to key press handling
 def check_events(joystick, jack):
+    # Check for a quit event or event where escape is pressed, then pass it on to key press handling
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             return False
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 return False
-    keypresses(joystick, jack)
 
+    # Keyboard key presses
+    key_presses(jack)
+
+    # Controller button presses
+    if joystick is not None:
+        if joystick.get_name() is 'PS4 Controller':
+            PS4_button_presses(joystick, jack)
+        else:
+            # Assume Xbox 360 controller by default
+            Xbox_360_button_presses(joystick, jack)
+
+    # Keep the game running
     return True
 
 
-"""
-Key press handling as well as joystick
-This was written with an xbox 360 controller in mind, but it should work for other controllers as well.  It just might
-mean that the buttons are in different places.
-This function replaces key down/up events as pygame's event detection has major flaws
-"""
-def keypresses(joystick, jack):
-    # D-pad
-    x, y = joystick.get_hat(0)
-    # D or D-pad right or Left stick right
-    if pygame.key.get_pressed()[pygame.K_d] or x == 1 or joystick.get_axis(0) > 0.5:
+# The controls functions do not use key down/up event detection as pygame seems to have major flaws with it
+# Keyboard controls
+def key_presses(jack):
+    # D
+    if pygame.key.get_pressed()[pygame.K_d]:
         jack.right_press(True)
     else:
         jack.right_press(False)
-    # A or D-pad left or Left stick left
-    if pygame.key.get_pressed()[pygame.K_a] or x == -1 or joystick.get_axis(0) < -0.5:
+    # A
+    if pygame.key.get_pressed()[pygame.K_a]:
         jack.left_press(True)
     else:
         jack.left_press(False)
-    # W or D-pad up or Left stick up
-    if pygame.key.get_pressed()[pygame.K_w] or y == 1 or joystick.get_axis(1) < -0.5:
+    # W
+    if pygame.key.get_pressed()[pygame.K_w]:
         jack.up_press(True)
     else:
         jack.up_press(False)
-    # S or D-pad down or Left stick down
-    if pygame.key.get_pressed()[pygame.K_s] or y == -1 or joystick.get_axis(1) > 0.5:
+    # S
+    if pygame.key.get_pressed()[pygame.K_s]:
         jack.down_press(True)
     else:
         jack.down_press(False)
-    # SPACEBAR or bottom button(A)
-    if pygame.key.get_pressed()[pygame.K_SPACE] or joystick.get_button(0):
+    # SPACEBAR
+    if pygame.key.get_pressed()[pygame.K_SPACE]:
         jack.jump_press(True)
     else:
         jack.jump_press(False)
-    # SHIFT or Right shoulder button(RB)
-    if pygame.key.get_pressed()[pygame.K_LSHIFT] or joystick.get_button(5):
+    # SHIFT
+    if pygame.key.get_pressed()[pygame.K_LSHIFT]:
         jack.invincidash(True)
     else:
         jack.invincidash(False)
-    # QUOTE or left button(X)
-    if pygame.key.get_pressed()[pygame.K_QUOTE] or joystick.get_button(2):
+    # QUOTE
+    if pygame.key.get_pressed()[pygame.K_QUOTE]:
         jack.melee_pressed = True
     else:
         jack.melee_pressed = False
-    # ENTER or right button(B)
-    if pygame.key.get_pressed()[pygame.K_RETURN] or joystick.get_button(1):
+    # ENTER
+    if pygame.key.get_pressed()[pygame.K_RETURN]:
         jack.ranged_pressed = True
     else:
         jack.ranged_pressed = False
 
+# PS4 controller controls
+def PS4_button_presses(joystick, jack):
+    # D-pad
+    x, y = joystick.get_hat(0)
+    # D-pad right or Left stick right
+    if x == 1 or joystick.get_axis(0) > 0.5:
+        jack.right_press(True)
+    else:
+        jack.right_press(False)
+    # D-pad left or Left stick left
+    if x == -1 or joystick.get_axis(0) < -0.5:
+        jack.left_press(True)
+    else:
+        jack.left_press(False)
+    # D-pad up or Left stick up
+    if y == 1 or joystick.get_axis(1) < -0.5:
+        jack.up_press(True)
+    else:
+        jack.up_press(False)
+    # D-pad down or Left stick down
+    if y == -1 or joystick.get_axis(1) > 0.5:
+        jack.down_press(True)
+    else:
+        jack.down_press(False)
+    # X button
+    if joystick.get_button(0):
+        jack.jump_press(True)
+    else:
+        jack.jump_press(False)
+    # Right shoulder button(RB)
+    if joystick.get_button(10):
+        jack.invincidash(True)
+    else:
+        jack.invincidash(False)
+    # Square button
+    if joystick.get_button(2):
+        jack.melee_pressed = True
+    else:
+        jack.melee_pressed = False
+    # Circle button
+    if joystick.get_button(1):
+        jack.ranged_pressed = True
+    else:
+        jack.ranged_pressed = False
+
+# Xbox 360 controller controls
+def Xbox_360_button_presses(joystick, jack):
+    # D-pad
+    x, y = joystick.get_hat(0)
+    # D-pad right or Left stick right
+    if x == 1 or joystick.get_axis(0) > 0.5:
+        jack.right_press(True)
+    else:
+        jack.right_press(False)
+    # D-pad left or Left stick left
+    if x == -1 or joystick.get_axis(0) < -0.5:
+        jack.left_press(True)
+    else:
+        jack.left_press(False)
+    # D-pad up or Left stick up
+    if y == 1 or joystick.get_axis(1) < -0.5:
+        jack.up_press(True)
+    else:
+        jack.up_press(False)
+    # D-pad down or Left stick down
+    if y == -1 or joystick.get_axis(1) > 0.5:
+        jack.down_press(True)
+    else:
+        jack.down_press(False)
+    # A button
+    if joystick.get_button(0):
+        jack.jump_press(True)
+    else:
+        jack.jump_press(False)
+    # Right shoulder button(RB)
+    if joystick.get_button(5):
+        jack.invincidash(True)
+    else:
+        jack.invincidash(False)
+    # X button
+    if joystick.get_button(2):
+        jack.melee_pressed = True
+    else:
+        jack.melee_pressed = False
+    # B button
+    if joystick.get_button(1):
+        jack.ranged_pressed = True
+    else:
+        jack.ranged_pressed = False
 
 def update_character_inputs(cur_time, jack):
     jack.determine_state(cur_time)
