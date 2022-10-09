@@ -16,12 +16,15 @@ class Screen(object):
 
     def new_frame(self):
         self.screen.fill((255, 255, 255))
+        #self.full_screen.fill((255, 255, 255))
 
     def blit_obj(self, obj):
         self.screen.blit(obj.image, obj.rect)
+        #self.full_screen.blit(obj.image, obj.rect)
 
     def blit_img_rect(self, image, rect):
         self.screen.blit(image, rect)
+        #self.full_screen.blit(image, rect)
 
     def display_frame(self):
         self.full_screen.blit(pygame.transform.scale(self.screen, (self.width, self.height)), (0, 0))

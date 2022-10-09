@@ -7,6 +7,7 @@ import pygame
 import MapGenerator as mg
 import GameFunctions as gf
 from pygame.sprite import Group
+from Classes.Controller import Controller
 from Classes.Screen import Screen
 from Classes.UserInterface import UserInterface
 from Classes.WorldSettings import WorldSettings
@@ -18,10 +19,12 @@ def vs_Twisted_Lumber():
     # Initialize pygame modules
     pygame.init()
     pygame.joystick.init()
+
+    # Find if there is a controller being used
     if pygame.joystick.get_count() > 0:
-        joystick = pygame.joystick.Joystick(0)
+        joystick = Controller(pygame.joystick.Joystick(0))
     else:
-        joystick = None
+        joystick = Controller()
 
     # Initialize the world settings and load assets
     w_settings = WorldSettings()
