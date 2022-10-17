@@ -7,27 +7,27 @@ import pygame
 
 
 # Event Handling
-def check_events(joystick, jack):
+def check_events(joystick, jack, toggle_pause, pause_already_toggled):
     # Check for a quit event or event where escape is pressed, then pass it on to key press handling
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            return False
+            return False, False, False
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
-                return False
+                return False, False, False
 
     # Update currently pressed buttons and axes positions on controller
     joystick.set_all_values()
 
     # Apply values from the controller and keyboard key presses
-    key_presses(joystick, jack)
+    toggle_pause, pause_already_toggled = key_presses(joystick, jack, toggle_pause, pause_already_toggled)
 
     # Keep the game running
-    return True
+    return True, toggle_pause, pause_already_toggled
 
 # This function does not use key down/up event detection as pygame seems to have major flaws with it
 # Keyboard and Controller controls
-def key_presses(joystick, jack):
+def key_presses(joystick, jack, toggle_pause, pause_already_toggled):
     # D, D-pad right, or Left stick right
     if pygame.key.get_pressed()[pygame.K_d] or joystick.right_is_pressed():
         jack.right_press(True)
@@ -68,6 +68,16 @@ def key_presses(joystick, jack):
         jack.ranged_pressed = True
     else:
         jack.ranged_pressed = False
+    # / or controller's pause button
+    if pygame.key.get_pressed()[pygame.K_SLASH] or joystick.pause_is_pressed():
+        if not pause_already_toggled:
+            pause_already_toggled = True
+            toggle_pause = True
+    else:
+        pause_already_toggled = False
+        toggle_pause = False
+    return toggle_pause, pause_already_toggled
+
 
 def update_character_inputs(cur_time, jack):
     jack.determine_state(cur_time)

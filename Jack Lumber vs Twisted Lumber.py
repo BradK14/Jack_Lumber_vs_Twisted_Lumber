@@ -56,18 +56,32 @@ def vs_Twisted_Lumber():
     # Create our timers
     fps_timer = pygame.time.Clock()  # This clock specifically used for frame rate
     cur_time = 0
+    last_frame = 0
+    new_frame = 0
+    paused = False
+    toggle_pause = False
+    pause_already_toggled = False
     
     # Begin the main loop for the game
     run = True
     while run:
         if run:
-            cur_time = pygame.time.get_ticks()
-            run = gf.check_events(joystick, jack)
-            gf.update_character_inputs(cur_time, jack)
-            gf.update_ai(cur_time, leaves, jack, enemies)
-            gf.update_positions(w_settings, surfaces, ranged_attacks, leaves, jack, enemies, cur_time)
-            gf.update_animations(cur_time, ranged_attacks, jack, enemies)
-            gf.update_screen(screen, UI, bg_blocks, surfaces, ranged_attacks, leaves, jack, boss, enemies)
+            last_frame = new_frame
+            new_frame = pygame.time.get_ticks()
+            run, toggle_pause, pause_already_toggled = gf.check_events(joystick, jack, toggle_pause, pause_already_toggled)
+            if toggle_pause:
+                toggle_pause = False
+                if paused:
+                    paused = False
+                else:
+                    paused = True
+            if not paused:
+                cur_time += new_frame - last_frame
+                gf.update_character_inputs(cur_time, jack)
+                gf.update_ai(cur_time, leaves, jack, enemies)
+                gf.update_positions(w_settings, surfaces, ranged_attacks, leaves, jack, enemies, cur_time)
+                gf.update_animations(cur_time, ranged_attacks, jack, enemies)
+                gf.update_screen(screen, UI, bg_blocks, surfaces, ranged_attacks, leaves, jack, boss, enemies)
         fps_timer.tick(w_settings.fps)
 
     # End game

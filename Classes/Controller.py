@@ -25,6 +25,7 @@ class Controller(object):
         self.left_button_num = None
         self.up_button_num = None
         self.down_button_num = None
+        self.pause_button_num = None
 
         self.jump_button = False
         self.dash_button = False
@@ -34,6 +35,7 @@ class Controller(object):
         self.left_button = False
         self.up_button = False
         self.down_button = False
+        self.pause_button = False
 
         # Create boolean variables to keep track of what our controller has
         self.has_d_pad = False
@@ -57,6 +59,7 @@ class Controller(object):
         self.dash_button_num = 10
         self.melee_button_num = 2
         self.ranged_button_num = 1
+        self.pause_button_num = 6
         self.right_button_num = 14
         self.left_button_num = 13
         self.up_button_num = 11
@@ -69,6 +72,7 @@ class Controller(object):
         self.dash_button_num = 5
         self.melee_button_num = 2
         self.ranged_button_num = 1
+        self.pause_button_num = 7
 
     def unknown_controller(self):
         # Check for directional controls
@@ -89,16 +93,19 @@ class Controller(object):
             self.left_button_num = 8
             self.up_button_num = 6
             self.down_button_num = 7
+            self.pause_button_num = 4
         elif num_buttons >= 6:  # Try to differentiate the dash button
             self.jump_button_num = 0
             self.dash_button_num = 5
             self.melee_button_num = 2
             self.ranged_button_num = 1
-        elif num_buttons >= 4:  # Minimum buttons possible
+            self.pause_button_num = 4
+        elif num_buttons >= 5:  # Minimum buttons possible
             self.jump_button_num = 0
             self.dash_button_num = 3
             self.melee_button_num = 2
             self.ranged_button_num = 1
+            self.pause_button_num = 4
 
     # Setters
     def set_all_values(self):
@@ -123,6 +130,8 @@ class Controller(object):
             self.melee_button = self.joystick.get_button(self.melee_button_num)
         if self.ranged_button_num is not None:
             self.ranged_button = self.joystick.get_button(self.ranged_button_num)
+        if self.pause_button_num is not None:
+            self.pause_button = self.joystick.get_button(self.pause_button_num)
 
     # Getters
     def right_is_pressed(self):
@@ -156,3 +165,6 @@ class Controller(object):
 
     def ranged_is_pressed(self):
         return self.ranged_button
+
+    def pause_is_pressed(self):
+        return self.pause_button
