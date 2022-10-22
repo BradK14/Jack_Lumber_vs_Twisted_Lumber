@@ -10,8 +10,11 @@ import pygame
 class WorldSettings(object):
     def __init__(self):
         """ Screen size """
+        self.screen_info = pygame.display.Info()
         self.screen_width = 1920
         self.screen_height = 1080
+        self.full_screen_width = self.screen_info.current_w
+        self.full_screen_height = self.screen_info.current_h
 
         """ Frames per second """
         self.fps = 60
