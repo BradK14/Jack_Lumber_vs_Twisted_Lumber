@@ -20,7 +20,7 @@ def create_bg_blocks(w_settings, bg_blocks, x, y, width, height):
 
 """ Maps """
 # Map 1
-def load_map(w_settings, bg_blocks, surfaces, jack, boss):
+def load_map_start(w_settings, bg_blocks, surfaces, jack):
     # Background
     create_bg_blocks(w_settings, bg_blocks, 0, 0, 60, 34)
 
@@ -31,12 +31,32 @@ def load_map(w_settings, bg_blocks, surfaces, jack, boss):
     surfaces.add(Surface(w_settings, 1856, 64, 4, 30))  # Right wall
 
     # Position Jack Lumber
-    jack.x = 300
-    jack.y = 300
-    jack.rect.x = 300
-    jack.rect.y = 300
+    jack.x = w_settings.buom * 8
+    jack.y = 1016 - w_settings.JL_height
+    jack.rect.x = int(jack.x)
+    jack.rect.y = int(jack.y)
+
+def reload_map_start(w_settings, jack):
+    # Position Jack Lumber
+    jack.health = w_settings.JL_health
+    jack.facing_left = False
+    jack.x = w_settings.buom * 8
+    jack.y = 1016 - w_settings.JL_height
+    jack.rect.x = int(jack.x)
+    jack.rect.y = int(jack.y)
+
+# Map 2 (Keeps the block set-up from Map 1 but repositions the boss enemy and Jack Lumber
+def load_map_vs_twisted_lumber(w_settings, jack, boss):
+    # Position Jack Lumber
+    jack.health = w_settings.JL_health
+    jack.facing_left = False
+    jack.x = w_settings.buom * 8
+    jack.y = 1016 - w_settings.JL_height
+    jack.rect.x = int(jack.x)
+    jack.rect.y = int(jack.y)
 
     # Position the Boss
+    boss.health = w_settings.TL_health
     boss.x = 1856 - (w_settings.TL_width * 2)
     boss.y = 1016 - w_settings.TL_height
     boss.rect.x = int(boss.x)

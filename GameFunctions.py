@@ -4,30 +4,33 @@ This file contains the functions used throughout the entire game, including even
 """
 
 import pygame
+import MapGenerator as mg
+from Classes.JackLumber import JackLumber
+from Classes.TwistedLumber import TwistedLumber
 
 
 # Event Handling
-def check_events(joystick, jack, toggle_pause, pause_already_toggled):
+def check_events(joystick, jack, in_start_area, game_over, toggle_pause, pause_already_toggled):
     # Check for a quit event or event where escape is pressed, then pass it on to key press handling
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            return False, False, False
+            return False, False, False, False
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
-                return False, False, False
+                return False, False, False, False
 
     # Update currently pressed buttons and axes positions on controller
     joystick.set_all_values()
 
     # Apply values from the controller and keyboard key presses
-    toggle_pause, pause_already_toggled = key_presses(joystick, jack, toggle_pause, pause_already_toggled)
+    ready_to_load_next_area, toggle_pause, pause_already_toggled = key_presses(joystick, jack, in_start_area, game_over, toggle_pause, pause_already_toggled)
 
     # Keep the game running
-    return True, toggle_pause, pause_already_toggled
+    return True, ready_to_load_next_area, toggle_pause, pause_already_toggled
 
 # This function does not use key down/up event detection as pygame seems to have major flaws with it
 # Keyboard and Controller controls
-def key_presses(joystick, jack, toggle_pause, pause_already_toggled):
+def key_presses(joystick, jack, in_start_area, game_over, toggle_pause, pause_already_toggled):
     # D, D-pad right, or Left stick right
     if pygame.key.get_pressed()[pygame.K_d] or joystick.right_is_pressed():
         jack.right_press(True)
@@ -69,14 +72,18 @@ def key_presses(joystick, jack, toggle_pause, pause_already_toggled):
     else:
         jack.ranged_pressed = False
     # / or controller's pause button
+    ready_to_load_next_area = False
     if pygame.key.get_pressed()[pygame.K_SLASH] or joystick.pause_is_pressed():
-        if not pause_already_toggled:
+        if in_start_area or game_over:
+            ready_to_load_next_area = True
+            pause_already_toggled = True
+        elif not pause_already_toggled:
             pause_already_toggled = True
             toggle_pause = True
     else:
         pause_already_toggled = False
         toggle_pause = False
-    return toggle_pause, pause_already_toggled
+    return ready_to_load_next_area, toggle_pause, pause_already_toggled
 
 
 def update_character_inputs(cur_time, jack):
@@ -183,3 +190,18 @@ def update_screen(screen, UI, bg_blocks, surfaces, ranged_attacks, leaves, jack,
 
     # Display everything in full screen
     screen.display_frame()
+
+def load_next_area(w_settings, in_start_area, jack, enemies):
+    if in_start_area:
+        in_start_area = False
+        boss = TwistedLumber(w_settings, 0, 0, True)
+        enemies.add(boss)
+        jack.__init__(w_settings, 0, 0, True)
+        mg.load_map_vs_twisted_lumber(w_settings, jack, boss)
+    else:  # If game over is True go back to the start screen
+        in_start_area = True
+        enemies.empty()
+        boss = None
+        jack.__init__(w_settings, 0, 0, True)
+        mg.reload_map_start(w_settings, jack)
+    return in_start_area, boss

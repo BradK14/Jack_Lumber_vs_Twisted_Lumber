@@ -51,7 +51,9 @@ def vs_Twisted_Lumber():
     leaves = Group()
 
     # Create the map
-    mg.load_map(w_settings, bg_blocks, surfaces, jack, boss)
+    mg.load_map_start(w_settings, bg_blocks, surfaces, jack)
+    in_start_area = True
+    game_over = False
 
     # Create our timers
     fps_timer = pygame.time.Clock()  # This clock specifically used for frame rate
@@ -68,13 +70,16 @@ def vs_Twisted_Lumber():
         if run:
             last_frame = new_frame
             new_frame = pygame.time.get_ticks()
-            run, toggle_pause, pause_already_toggled = gf.check_events(joystick, jack, toggle_pause, pause_already_toggled)
+            run, ready_to_load_next_area, toggle_pause, pause_already_toggled = gf.check_events(joystick, jack, in_start_area, game_over, toggle_pause, pause_already_toggled)
             if toggle_pause:
                 toggle_pause = False
                 if paused:
                     paused = False
                 else:
                     paused = True
+            elif ready_to_load_next_area:
+                in_start_area, boss = gf.load_next_area(w_settings, in_start_area, jack, enemies)
+                game_over = False
             if not paused:
                 cur_time += new_frame - last_frame
                 gf.update_character_inputs(cur_time, jack)
