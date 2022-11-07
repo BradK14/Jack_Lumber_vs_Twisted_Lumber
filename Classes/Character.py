@@ -22,6 +22,9 @@ class Character(Sprite):
         # Set up speed variables
         self.y_velocity = 0
 
+        # Set up frame by frame positional info to more accurately detect collisions
+        self.previous_position = [0, 0, 0, 0]  # Left, Top, Right, Bottom
+
         # Dummy variables that are to be changed by child classes
         self.max_health = 0
         self.health = self.max_health
@@ -31,8 +34,12 @@ class Character(Sprite):
         self.rect = None
 
     # Update position
-    def update_pos(self):
-        self.y_velocity += self.w_settings.fall_acceleration
+    def update_pos(self, time_passed):
+        # Save previous position before attempting to move
+        self.previous_position = [self.rect.left, self.rect.top, self.rect.right, self.rect.bottom]
+
+        # Apply gravity
+        self.y_velocity += self.w_settings.fall_acceleration * time_passed
         self.y += self.y_velocity
         self.rect.y = int(self.y)
 
@@ -44,7 +51,8 @@ class Character(Sprite):
         for surface in surfaces:
             if self.rect.colliderect(surface):
                 # Top of a surface
-                if self.rect.bottom > surface.rect.top and self.y_velocity >= self.rect.bottom - surface.rect.top:
+                # if self.rect.bottom > surface.rect.top and self.y_velocity >= self.rect.bottom - surface.rect.top:
+                if self.previous_position[3] <= surface.rect.top:
                     touched_top_surface = True
                     self.on_top_of_surface(surface)
                 # Below a surface

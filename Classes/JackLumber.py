@@ -37,6 +37,7 @@ class JackLumber(Character):
 
         # A variable to refresh the current time for use in animations and delays
         self.cur_time = 0
+        self.time_passed = 0
 
         # Set up animation handling
         self.walk_left_anim = Animation(self.w_settings.JL_walk_left_anim,
@@ -138,9 +139,10 @@ class JackLumber(Character):
     Determining the characters state 
     Here we sort out most of our bools based on input from the user and restrictions from delays
     """
-    def determine_state(self, cur_time):
+    def determine_state(self, cur_time, time_passed):
         # Update the current time
         self.cur_time = cur_time
+        self.time_passed = time_passed
 
         # Reset temporary markers
         self.charged_melee_attacking = False
@@ -376,16 +378,19 @@ class JackLumber(Character):
             return Ranged(self.w_settings, self.rect, self.facing_left)
 
     """ Character movement """
-    def update_pos(self):  # Overrides parents (Character) update_pos function
+    def update_pos(self, time_passed):  # Overrides parents (Character) update_pos function
+        # First save previous position
+        self.previous_position = [self.rect.left, self.rect.top, self.rect.right, self.rect.bottom]
+
         # Being hit by an attack
         if self.dead:
-            self.y_velocity += self.w_settings.fall_acceleration
+            self.y_velocity += self.w_settings.fall_acceleration * time_passed
             self.y += self.y_velocity
         elif self.being_damaged:
             if self.facing_left:
-                self.x += self.w_settings.JL_damaged_x_vel
+                self.x += self.w_settings.JL_damaged_x_vel * time_passed
             else:
-                self.x -= self.w_settings.JL_damaged_x_vel
+                self.x -= self.w_settings.JL_damaged_x_vel * time_passed
             self.y_velocity += self.w_settings.fall_acceleration
             self.y += self.y_velocity
         # Beginning a dash or in dash stage 2
@@ -395,63 +400,63 @@ class JackLumber(Character):
         elif self.dashing:
             # Dashing up
             if self.dashing_up:
-                self.y += self.dash_vel * -1
-                self.y_velocity = self.dash_vel * -1
+                self.y += self.dash_vel * time_passed * -1
+                self.y_velocity = self.dash_vel * time_passed * -1
             # Dashing down
             elif self.dashing_down:
-                self.y += self.dash_vel
-                self.y_velocity = self.dash_vel
+                self.y += self.dash_vel * time_passed
+                self.y_velocity = self.dash_vel * time_passed
             elif self.dashing_x:
                 # Dashing left
                 if self.facing_left:
-                    self.x += self.dash_vel * -1
+                    self.x += self.dash_vel * time_passed * -1
                 # Dashing right
                 else:
-                    self.x += self.dash_vel
+                    self.x += self.dash_vel * time_passed
                 self.y_velocity = 0
         else:  # Regular Movement
             # Moving left
             if self.moving_x and self.facing_left:
                 if self.air_dashing:
-                    self.x += self.dash_vel * -1
+                    self.x += self.dash_vel * time_passed * -1
                 else:
-                    self.x += self.x_vel * -1
+                    self.x += self.x_vel * time_passed * -1
             # Moving right
             elif self.moving_x and not self.facing_left:
                 if self.air_dashing:
-                    self.x += self.dash_vel
+                    self.x += self.dash_vel * time_passed
                 else:
-                    self.x += self.x_vel
+                    self.x += self.x_vel * time_passed
 
             # Wall jump (do nothing as it is handled in check surfaces, jumping controls not allowed)
             if self.wall_jumping:
                 pass
             # Dash jump
             elif self.jumping and self.grounded_dashing:
-                self.y_velocity = self.w_settings.JL_init_jump_vel
+                self.y_velocity = self.w_settings.JL_init_jump_vel * time_passed
                 self.grounded_dashing = False  # STATE CHANGE
             # Jump
             elif self.jumping and self.grounded:
-                self.y_velocity = self.w_settings.JL_init_jump_vel
+                self.y_velocity = self.w_settings.JL_init_jump_vel * time_passed
             # Jump cancel
             elif not self.jumping and self.y_velocity < 0:
                 self.y_velocity = 0
             # Apply y axis acceleration and speed
-            self.y_velocity += self.w_settings.fall_acceleration
+            self.y_velocity += self.w_settings.fall_acceleration * time_passed
             self.y += self.y_velocity
 
         self.rect.x = int(self.x)
         self.rect.y = int(self.y)
 
     # Reposition slightly if overlapped with enemy
-    def check_collision_with_enemy(self, enemy):
+    def check_collision_with_enemy(self, enemy, time_passed):
         if self.rect.colliderect(enemy.rect):
             if self.rect.centerx <= enemy.rect.centerx:  # Push Jack to left
                 distance = self.rect.right - enemy.rect.left
-                self.x -= distance / 2
+                self.x -= (distance / 16 * time_passed) / 2
             else:  # Push Jack to right
                 distance = enemy.rect.right - self.rect.left
-                self.x += distance / 2
+                self.x += (distance / 16 * time_passed) / 2
             self.rect.x = int(self.x)
 
     # Last point in frame that involves repositioning
@@ -523,7 +528,7 @@ class JackLumber(Character):
         self.dash_to_surface_reset()
         if self.charged_melee_attacking:
             self.wall_jumping = True
-            self.y_velocity = self.w_settings.JL_init_jump_vel * 1.25
+            self.y_velocity = self.w_settings.JL_init_jump_vel * self.time_passed * 1.25
             self.air_dashing = True
 
     def right_of_surface(self, surface):
@@ -531,7 +536,7 @@ class JackLumber(Character):
         self.dash_to_surface_reset()
         if self.charged_melee_attacking:
             self.wall_jumping = True
-            self.y_velocity = self.w_settings.JL_init_jump_vel * 1.25
+            self.y_velocity = self.w_settings.JL_init_jump_vel * self.time_passed * 1.25
             self.air_dashing = True
 
     # Cancel dash when dashing into a surface

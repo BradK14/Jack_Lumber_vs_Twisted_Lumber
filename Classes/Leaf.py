@@ -39,11 +39,11 @@ class Leaf(Sprite):
         self.off_left = False
         self.off_right = False
 
-    def update_pos(self, cur_time):
+    def update_pos(self, cur_time, time_passed):
         if self.init_delay.is_active(cur_time):
-            self.y_vel += self.w_settings.fall_acceleration / 32
+            self.y_vel += (self.w_settings.fall_acceleration * time_passed) / 32
         else:
-            self.y_vel += self.w_settings.fall_acceleration / 16
+            self.y_vel += (self.w_settings.fall_acceleration * time_passed) / 16
         self.y += self.y_vel
         self.rect.y = int(self.y)
 

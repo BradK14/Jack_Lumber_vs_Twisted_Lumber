@@ -55,11 +55,11 @@ class Ranged(Sprite):
             enemy.health -= self.damage
             self.enemies.add(enemy)
 
-    def update_position(self):
+    def update_position(self, time_passed):
         if self.facing_left:
-            self.x += self.w_settings.JL_ranged_vel * -1
+            self.x += self.w_settings.JL_ranged_vel * time_passed * -1
         else:
-            self.x += self.w_settings.JL_ranged_vel
+            self.x += self.w_settings.JL_ranged_vel * time_passed
         self.rect.x = int(self.x)
 
     def update_animation(self, cur_time):

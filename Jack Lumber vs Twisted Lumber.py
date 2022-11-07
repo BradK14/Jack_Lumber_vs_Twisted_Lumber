@@ -40,18 +40,20 @@ def vs_Twisted_Lumber():
     jack = JackLumber(w_settings, 0, 0, False)
 
     # Create a boss for him to fight
-    boss = TwistedLumber(w_settings, 0, 0, True)
+    #boss = TwistedLumber(w_settings, 0, 0, True)
+    boss = None
 
     # Create containers for each asset needed
     enemies = Group()
-    enemies.add(boss)  # Immediately include the boss
+    #enemies.add(boss)  # Immediately include the boss
     bg_blocks = Group()
     surfaces = Group()
+    background = pygame.Surface([w_settings.screen_width, w_settings.screen_height])
     ranged_attacks = Group()
     leaves = Group()
 
     # Create the map
-    mg.load_map_start(w_settings, bg_blocks, surfaces, jack)
+    mg.load_map_start(w_settings, bg_blocks, surfaces, background, jack)
     in_start_area = True
     game_over = False
 
@@ -82,11 +84,12 @@ def vs_Twisted_Lumber():
                 game_over = False
             if not paused:
                 cur_time += new_frame - last_frame
-                gf.update_character_inputs(cur_time, jack)
-                gf.update_ai(cur_time, leaves, jack, enemies)
-                gf.update_positions(w_settings, surfaces, ranged_attacks, leaves, jack, enemies, cur_time)
+                time_passed = new_frame - last_frame
+                gf.update_character_inputs(cur_time, time_passed, jack)
+                gf.update_ai(cur_time, time_passed, leaves, jack, enemies)
+                gf.update_positions(w_settings, surfaces, ranged_attacks, leaves, jack, enemies, cur_time, time_passed)
                 gf.update_animations(cur_time, ranged_attacks, jack, enemies)
-                gf.update_screen(screen, UI, bg_blocks, surfaces, ranged_attacks, leaves, jack, boss, enemies)
+                gf.update_screen(screen, UI, background, ranged_attacks, leaves, jack, boss, enemies)
         fps_timer.tick(w_settings.fps)
 
     # End game

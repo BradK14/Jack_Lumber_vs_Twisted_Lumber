@@ -16,12 +16,12 @@ class LeafDart(Leaf):
         self.dart_delay = Delay(self.w_settings.TL_leaf_dart_wait_period)
         self.dart_delay.begin(cur_time)
 
-    def update_pos(self, cur_time):
+    def update_pos(self, cur_time, time_passed):
         if not self.dart_delay.is_active(cur_time):
             if self.facing_left:
-                self.x += self.w_settings.TL_leaf_dart_speed * -1
+                self.x += self.w_settings.TL_leaf_dart_speed * time_passed * -1
             else:
-                self.x += self.w_settings.TL_leaf_dart_speed
+                self.x += self.w_settings.TL_leaf_dart_speed * time_passed
         self.rect.x = int(self.x)
         self.rect.y = int(self.y)
 

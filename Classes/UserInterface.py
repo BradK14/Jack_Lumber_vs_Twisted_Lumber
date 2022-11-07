@@ -29,6 +29,11 @@ class UserInterface(object):
         self.num_8_image = self.w_settings.num_8_image
         self.num_9_image = self.w_settings.num_9_image
 
+        # Start screen text
+        self.press_start_image = self.w_settings.press_start_image
+        self.practice_text_image = self.w_settings.practice_text_image
+        self.wall_launch_hint_image = self.w_settings.wall_launch_hint_image
+
         # Gather sizes of images
         self.charge_M_width = self.w_settings.charge_M_width
         self.charge_M_height = self.w_settings.charge_M_height
@@ -36,6 +41,14 @@ class UserInterface(object):
         self.charge_R_height = self.w_settings.charge_R_height
         self.text_width = self.w_settings.text_width
         self.text_height = self.w_settings.text_height
+        self.press_start_width = self.w_settings.press_start_width
+        self.press_start_height = self.w_settings.press_start_height
+        self.practice_text_width = self.w_settings.practice_text_width
+        self.practice_text_height = self.w_settings.practice_text_height
+        self.wall_launch_hint_width = self.w_settings.wall_launch_hint_width
+        self.wall_launch_hint_height = self.w_settings.wall_launch_hint_height
+        self.text_box_width = self.w_settings.text_box_width
+        self.text_box_height = self.w_settings.text_box_height
 
         # Create a rect for each image at an appropriate location
         # Charge images on the left side of the screen
@@ -61,6 +74,18 @@ class UserInterface(object):
         self.boss_health_3_rect = pygame.Rect(self.boss_health_2_rect.right, dist_from_top_of_screen,
                                               self.text_width, self.text_height)
 
+        # Practice text at the top center of the screen
+        self.practice_text_rect = pygame.Rect(int(self.screen_width / 2 - self.practice_text_width / 2), dist_from_top_of_screen,
+                                              self.practice_text_width, self.practice_text_height)
+
+        # Press Start text just below the practice text, centered on the screen
+        self.press_start_rect = pygame.Rect(int(self.screen_width / 2 - self.press_start_width / 2), self.practice_text_rect.bottom + self.press_start_height,
+                                            self.press_start_width, self.press_start_height)
+
+        # Wall launch hint just off the left side of the screen
+        self.wall_launch_hint_rect = pygame.Rect(self.w_settings.buom * 2, int(self.screen_height / 3),
+                                                 self.wall_launch_hint_width, self.wall_launch_hint_height)
+
     def display(self, screen, jack, boss):
         # Display Jack's charged states
         if jack.melee_charged:
@@ -74,10 +99,15 @@ class UserInterface(object):
             screen.blit_img_rect(self.charge_R_image, self.charge_R_rect)
 
         # Display Jack and the boss' health
-        characters = [jack, boss]
-        health_rects = [[self.jack_health_1_rect, self.jack_health_2_rect, self.jack_health_3_rect],
-                        [self.boss_health_1_rect, self.boss_health_2_rect, self.boss_health_3_rect]]
-        for x in range(0, 2):
+        if boss is not None:
+            characters = [jack, boss]
+            health_rects = [[self.jack_health_1_rect, self.jack_health_2_rect, self.jack_health_3_rect],
+                            [self.boss_health_1_rect, self.boss_health_2_rect, self.boss_health_3_rect]]
+        else:
+            characters = [jack]
+            health_rects = [[self.jack_health_1_rect, self.jack_health_2_rect, self.jack_health_3_rect]]
+
+        for x in range(0, len(characters)):
             health_percent = math.ceil(characters[x].health / characters[x].max_health * 100)
             for y in range(0, 3):
                 num = int((health_percent / (10 ** (2 - y))) % 10)
@@ -103,3 +133,9 @@ class UserInterface(object):
                     pass
                 else:
                     screen.blit_img_rect(self.num_0_image, health_rects[x][y])
+
+        # Start screen text
+        screen.blit_img_rect(self.practice_text_image, self.practice_text_rect)
+        screen.blit_img_rect(self.press_start_image, self.press_start_rect)
+        screen.blit_img_rect(self.wall_launch_hint_image, self.wall_launch_hint_rect)
+

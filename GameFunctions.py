@@ -86,52 +86,52 @@ def key_presses(joystick, jack, in_start_area, game_over, toggle_pause, pause_al
     return ready_to_load_next_area, toggle_pause, pause_already_toggled
 
 
-def update_character_inputs(cur_time, jack):
-    jack.determine_state(cur_time)
+def update_character_inputs(cur_time, time_passed, jack):
+    jack.determine_state(cur_time, time_passed)
 
-def update_ai(cur_time, leaves, jack, enemies):
+def update_ai(cur_time, time_passed, leaves, jack, enemies):
     for enemy in enemies:
-        enemy.decide_next_move(cur_time, leaves, jack)
+        enemy.decide_next_move(cur_time, time_passed, leaves, jack)
 
     for enemy in enemies:
         enemy.update_attacks(cur_time, leaves)
 
 # Update the positions of all moving objects
-def update_positions(w_settings, surfaces, ranged_attacks, leaves, jack, enemies, cur_time):
+def update_positions(w_settings, surfaces, ranged_attacks, leaves, jack, enemies, cur_time, time_passed):
     # Move Jack
-    jack.update_pos()
+    jack.update_pos(time_passed)
 
     # Move the enemies
     for enemy in enemies:
-        enemy.update_pos()
+        enemy.update_pos(time_passed)
 
     # Move all ranged attacks
     for ranged_attack in ranged_attacks:
-        ranged_attack.update_position()
+        ranged_attack.update_position(time_passed)
         # Delete ranged attacks that have moved off the screen
         if ranged_attack.rect.right < 0 or ranged_attack.rect.left > w_settings.screen_width:
             ranged_attacks.remove(ranged_attack)
 
     # Move all leaves
     for leaf in leaves:
-        leaf.update_pos(cur_time)
+        leaf.update_pos(cur_time, time_passed)
         # Delete leaves that have moved off the screen
         if leaf.ready_to_delete():
             leaves.remove(leaf)
 
     # Immediately after everything has been moved deal with any collisions
-    check_collisions(surfaces, ranged_attacks, leaves, jack, enemies)
+    check_collisions(surfaces, ranged_attacks, leaves, jack, enemies, time_passed)
 
 # Deal with any collisions between objects and characters
-def check_collisions(surfaces, ranged_attacks, leaves, jack, enemies):
-    check_character_to_character_collisions(jack, enemies)  # Less important position changes first
+def check_collisions(surfaces, ranged_attacks, leaves, jack, enemies, time_passed):
+    check_character_to_character_collisions(jack, enemies, time_passed)  # Less important position changes first
     check_character_to_surface_collision(surfaces, ranged_attacks, jack, enemies)  # Most important position changes last
     check_attack_collisions(surfaces, ranged_attacks, leaves, jack, enemies)  # Damage and state change checks
 
 # Change position to keep characters from overlapping
-def check_character_to_character_collisions(jack, enemies):
+def check_character_to_character_collisions(jack, enemies, time_passed):
     for enemy in enemies:
-        jack.check_collision_with_enemy(enemy)
+        jack.check_collision_with_enemy(enemy, time_passed)
 
 # Make sure characters do not overlap with surfaces like blocks
 def check_character_to_surface_collision(surfaces, ranged_attacks, jack, enemies):
@@ -157,18 +157,12 @@ def update_animations(cur_time, ranged_attacks, jack, enemies):
         ranged_attack.update_animation(cur_time)
 
 # Display a new screen based on all object locations
-def update_screen(screen, UI, bg_blocks, surfaces, ranged_attacks, leaves, jack, boss, enemies):
+def update_screen(screen, UI, background, ranged_attacks, leaves, jack, boss, enemies):
     # Wipe the current screen
     screen.new_frame()
 
-    # Start with the background
-    for bg_block in bg_blocks:
-        screen.blit_obj(bg_block)
-
-    # Next the foreground
-    for surface in surfaces:
-        for block in surface.blocks:
-            screen.blit_obj(block)
+    # First the background
+    screen.blit_img(background, [0, 0])
 
     # Next the enemies
     for enemy in enemies:

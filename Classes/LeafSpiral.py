@@ -19,20 +19,20 @@ class LeafSpiral(Leaf):
         self.radius_vel = 0
         self.angle = start_angle
 
-    def update_pos(self, cur_time):
+    def update_pos(self, cur_time, time_passed):
         # Determine the new radius
         if self.init_delay.is_active(cur_time):
-            self.radius_vel += self.w_settings.TL_leaf_spiral_init_radius_accel
+            self.radius_vel += self.w_settings.TL_leaf_spiral_init_radius_accel * time_passed
         else:
-            self.radius_vel += self.w_settings.TL_leaf_spiral_radius_accel
+            self.radius_vel += self.w_settings.TL_leaf_spiral_radius_accel * time_passed
 
         self.radius += self.radius_vel
 
         # Determine the new angle
         if self.facing_left:
-            self.angle -= self.w_settings.TL_leaf_spiral_angle_vel
+            self.angle -= self.w_settings.TL_leaf_spiral_angle_vel * time_passed
         else:
-            self.angle += self.w_settings.TL_leaf_spiral_angle_vel
+            self.angle += self.w_settings.TL_leaf_spiral_angle_vel* time_passed
 
         # Apply all changes
         self.rect.centerx = int(self.center_x + math.cos(self.angle) * self.radius)

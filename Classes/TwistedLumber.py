@@ -37,6 +37,7 @@ class TwistedLumber(Character):
 
         # For recording the current time
         self.cur_time = 0
+        self.time_passed = 0
 
         # Set up delays for next attack
         self.wait_delay = Delay(self.w_settings.TL_wait_period)
@@ -71,21 +72,24 @@ class TwistedLumber(Character):
         self.vines = Group()
 
     # Update position
-    def update_pos(self):
+    def update_pos(self, time_passed):
+        # First save previous position
+        self.previous_position = [self.rect.left, self.rect.top, self.rect.right, self.rect.bottom]
+
         # Positioning based off jumping move
         if self.jumping and not self.grounded:
-            self.x += self.w_settings.TL_x_vel * self.jump_dir
+            self.x += self.w_settings.TL_x_vel * time_passed * self.jump_dir
             self.rect.x = int(self.x)
         else:
             self.jumping = False
 
         # Positioning based off falling leaves attack
         if self.rising_by_vines:
-            self.y_velocity = self.w_settings.TL_vine_rise_vel
+            self.y_velocity = self.w_settings.TL_vine_rise_vel * time_passed
 
         # Only reposition if not using these moves
         if not self.ceiling_shake and not self.creating_vines:
-            self.y_velocity += self.w_settings.fall_acceleration
+            self.y_velocity += self.w_settings.fall_acceleration * time_passed
             self.y += self.y_velocity
             self.rect.y = int(self.y)
 
@@ -129,9 +133,10 @@ class TwistedLumber(Character):
         if self.health <= 0:
             self.health = 0
 
-    def decide_next_move(self, cur_time, leaves, jack=None):
+    def decide_next_move(self, cur_time, time_passed, leaves, jack=None):
         # Set the time
         self.cur_time = cur_time
+        self.time_passed = time_passed
 
         if self.grounded:  # Can only begin a new action while touching the ground
             if not self.cur_delay_is_active(cur_time):
@@ -205,7 +210,7 @@ class TwistedLumber(Character):
     def jump(self):
         self.jumping = True
         self.grounded = False
-        self.y_velocity += self.w_settings.TL_init_jump_vel
+        self.y_velocity += self.w_settings.TL_init_jump_vel * self.time_passed
 
         if self.facing_left:
             self.jump_dir = -1

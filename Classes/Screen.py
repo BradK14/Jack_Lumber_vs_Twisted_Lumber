@@ -13,8 +13,8 @@ class Screen(object):
         self.height = self.w_settings.full_screen_height
         self.game_width = self.w_settings.screen_width
         self.game_height = self.w_settings.screen_height
-        self.full_screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
-        self.screen = pygame.Surface((self.game_width, self.game_height))
+        self.full_screen = self.w_settings.full_screen
+        self.screen = self.w_settings.screen
 
     def new_frame(self):
         self.screen.fill((255, 255, 255))
@@ -24,6 +24,9 @@ class Screen(object):
 
     def blit_img_rect(self, image, rect):
         self.screen.blit(image, rect)
+
+    def blit_img(self, image, location):
+        self.screen.blit(image, location)
 
     def display_frame(self):
         self.full_screen.blit(pygame.transform.scale(self.screen, (self.width, self.height)), (0, 0))

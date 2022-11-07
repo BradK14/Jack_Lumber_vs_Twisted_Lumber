@@ -20,7 +20,7 @@ def create_bg_blocks(w_settings, bg_blocks, x, y, width, height):
 
 """ Maps """
 # Map 1
-def load_map_start(w_settings, bg_blocks, surfaces, jack):
+def load_map_start(w_settings, bg_blocks, surfaces, background, jack):
     # Background
     create_bg_blocks(w_settings, bg_blocks, 0, 0, 60, 34)
 
@@ -29,6 +29,16 @@ def load_map_start(w_settings, bg_blocks, surfaces, jack):
     surfaces.add(Surface(w_settings, 0, 0, 60, 2))  # Ceiling
     surfaces.add(Surface(w_settings, -64, 64, 4, 30))  # Left wall
     surfaces.add(Surface(w_settings, 1856, 64, 4, 30))  # Right wall
+
+    # Put entire background into one image
+    # Starting with background
+    for bg_block in bg_blocks:
+        background.blit(bg_block.image, bg_block.rect)
+
+    # Then the foreground
+    for surface in surfaces:
+        for block in surface.blocks:
+            background.blit(block.image, block.rect)
 
     # Position Jack Lumber
     jack.x = w_settings.buom * 8
