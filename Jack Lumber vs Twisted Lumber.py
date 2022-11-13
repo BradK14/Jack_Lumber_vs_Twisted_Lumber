@@ -80,16 +80,18 @@ def vs_Twisted_Lumber():
                 else:
                     paused = True
             elif ready_to_load_next_area:
-                in_start_area, boss = gf.load_next_area(w_settings, in_start_area, jack, enemies)
+                in_start_area, boss = gf.load_next_area(w_settings, in_start_area, jack, enemies, ranged_attacks, leaves)
                 game_over = False
-            if not paused:
+            if not paused and not game_over:
                 cur_time += new_frame - last_frame
                 time_passed = new_frame - last_frame
                 gf.update_character_inputs(cur_time, time_passed, jack)
                 gf.update_ai(cur_time, time_passed, leaves, jack, enemies)
                 gf.update_positions(w_settings, surfaces, ranged_attacks, leaves, jack, enemies, cur_time, time_passed)
                 gf.update_animations(cur_time, ranged_attacks, jack, enemies)
-                gf.update_screen(screen, UI, background, ranged_attacks, leaves, jack, boss, enemies)
+                game_over = gf.update_screen(screen, in_start_area, UI, background, ranged_attacks, leaves, jack, boss, enemies)
+                if not in_start_area:
+                    game_over = gf.check_for_game_over(screen, UI, jack, boss)
         fps_timer.tick(w_settings.fps)
 
     # End game

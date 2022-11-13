@@ -34,6 +34,9 @@ class UserInterface(object):
         self.practice_text_image = self.w_settings.practice_text_image
         self.wall_launch_hint_image = self.w_settings.wall_launch_hint_image
 
+        # Game over text
+        self.game_over_text_image = self.w_settings.game_over_text_image
+
         # Gather sizes of images
         self.charge_M_width = self.w_settings.charge_M_width
         self.charge_M_height = self.w_settings.charge_M_height
@@ -49,6 +52,8 @@ class UserInterface(object):
         self.wall_launch_hint_height = self.w_settings.wall_launch_hint_height
         self.text_box_width = self.w_settings.text_box_width
         self.text_box_height = self.w_settings.text_box_height
+        self.game_over_text_width = self.w_settings.game_over_text_width
+        self.game_over_text_height = self.w_settings.game_over_text_height
 
         # Create a rect for each image at an appropriate location
         # Charge images on the left side of the screen
@@ -85,8 +90,31 @@ class UserInterface(object):
         # Wall launch hint just off the left side of the screen
         self.wall_launch_hint_rect = pygame.Rect(self.w_settings.buom * 2, int(self.screen_height / 3),
                                                  self.wall_launch_hint_width, self.wall_launch_hint_height)
+        # Game over text centered on screen
+        self.game_over_text_rect = pygame.Rect(int(self.w_settings.screen_width / 2) - int(self.game_over_text_width / 2),
+                                               int(self.w_settings.screen_height / 2) - int(self.game_over_text_height / 2),
+                                               self.game_over_text_width, self.game_over_text_height)
 
-    def display(self, screen, jack, boss):
+    # Start screen text
+    def display_start_ui(self, screen, jack):
+        # Display Jack's charged states
+        if jack.melee_charged:
+            self.charge_M_rect.x = jack.rect.x
+            self.charge_M_rect.y = jack.rect.y - self.charge_M_height * 2
+            screen.blit_img_rect(self.charge_M_image, self.charge_M_rect)
+
+        if jack.ranged_charged:
+            self.charge_R_rect.x = jack.rect.right - self.charge_R_width
+            self.charge_R_rect.y = jack.rect.y - self.charge_R_height * 2
+            screen.blit_img_rect(self.charge_R_image, self.charge_R_rect)
+
+        # Text for info and start prompt
+        screen.blit_img_rect(self.practice_text_image, self.practice_text_rect)
+        screen.blit_img_rect(self.press_start_image, self.press_start_rect)
+        screen.blit_img_rect(self.wall_launch_hint_image, self.wall_launch_hint_rect)
+
+    # Fight screen text
+    def display_fight_ui(self, screen, jack, boss):
         # Display Jack's charged states
         if jack.melee_charged:
             self.charge_M_rect.x = jack.rect.x
@@ -134,8 +162,5 @@ class UserInterface(object):
                 else:
                     screen.blit_img_rect(self.num_0_image, health_rects[x][y])
 
-        # Start screen text
-        screen.blit_img_rect(self.practice_text_image, self.practice_text_rect)
-        screen.blit_img_rect(self.press_start_image, self.press_start_rect)
-        screen.blit_img_rect(self.wall_launch_hint_image, self.wall_launch_hint_rect)
-
+    def display_game_over(self, screen):
+        screen.blit_img_rect(self.game_over_text_image, self.game_over_text_rect)

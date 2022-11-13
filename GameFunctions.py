@@ -74,12 +74,12 @@ def key_presses(joystick, jack, in_start_area, game_over, toggle_pause, pause_al
     # / or controller's pause button
     ready_to_load_next_area = False
     if pygame.key.get_pressed()[pygame.K_SLASH] or joystick.pause_is_pressed():
-        if in_start_area or game_over:
-            ready_to_load_next_area = True
+        if not pause_already_toggled:
+            if in_start_area or game_over:
+                ready_to_load_next_area = True
+            else:
+                toggle_pause = True
             pause_already_toggled = True
-        elif not pause_already_toggled:
-            pause_already_toggled = True
-            toggle_pause = True
     else:
         pause_already_toggled = False
         toggle_pause = False
@@ -157,7 +157,7 @@ def update_animations(cur_time, ranged_attacks, jack, enemies):
         ranged_attack.update_animation(cur_time)
 
 # Display a new screen based on all object locations
-def update_screen(screen, UI, background, ranged_attacks, leaves, jack, boss, enemies):
+def update_screen(screen, in_start_area, UI, background, ranged_attacks, leaves, jack, boss, enemies):
     # Wipe the current screen
     screen.new_frame()
 
@@ -180,12 +180,24 @@ def update_screen(screen, UI, background, ranged_attacks, leaves, jack, boss, en
         screen.blit_obj(ranged_attack)
 
     # Last the user interface
-    UI.display(screen, jack, boss)
+    game_over = False
+    if in_start_area:
+        UI.display_start_ui(screen, jack)
+    else:
+        UI.display_fight_ui(screen, jack, boss)
+        game_over = check_for_game_over(screen, UI, jack, boss)  # Check for a game over
 
     # Display everything in full screen
     screen.display_frame()
+    return game_over
 
-def load_next_area(w_settings, in_start_area, jack, enemies):
+def check_for_game_over(screen, UI, jack, boss):
+    if jack.health <= 0 or boss is None or boss.health <= 0:
+        UI.display_game_over(screen)
+        return True
+    return False
+
+def load_next_area(w_settings, in_start_area, jack, enemies, ranged_attacks, leaves):
     if in_start_area:
         in_start_area = False
         boss = TwistedLumber(w_settings, 0, 0, True)
@@ -194,6 +206,8 @@ def load_next_area(w_settings, in_start_area, jack, enemies):
         mg.load_map_vs_twisted_lumber(w_settings, jack, boss)
     else:  # If game over is True go back to the start screen
         in_start_area = True
+        ranged_attacks.empty()
+        leaves.empty()
         enemies.empty()
         boss = None
         jack.__init__(w_settings, 0, 0, True)

@@ -60,6 +60,8 @@ class WorldSettings(object):
         self.wall_launch_hint_height = int(self.text_height * (41 / 8))
         self.text_box_width = int(self.text_width * (90 / 8))
         self.text_box_height = int(self.text_height * (62 / 8))
+        self.game_over_text_width = int(44 * 40)
+        self.game_over_text_height = int(8 * 40)
 
         # Twisted Lumber's size
         self.TL_width = int(self.JL_width * 2)
@@ -148,6 +150,7 @@ class WorldSettings(object):
         self.press_start_image = pygame.transform.scale(pygame.image.load('Images/Press Start.png').convert_alpha(), (self.text_box_width, self.text_box_height))
         self.practice_text_image = pygame.transform.scale(pygame.image.load('Images/Practice text.png').convert_alpha(), (self.text_box_width, self.text_box_height))
         self.wall_launch_hint_image = pygame.transform.scale(pygame.image.load('Images/Wall Launch Hint.png').convert_alpha(), (self.text_box_width, self.text_box_height))
+        self.game_over_text_image = pygame.transform.scale(pygame.image.load('Images/Jack Lumber Game Over.png').convert_alpha(), (self.game_over_text_width, self.game_over_text_height))
 
         # Foreground block image
         self.GrassyBlock_image = pygame.transform.scale(pygame.image.load('Images/Grassy Block.png').convert(), (self.GrassyBlock_width, self.GrassyBlock_height))
