@@ -47,12 +47,12 @@ class TwistedLumber(Character):
         self.falling_leaves_attack_delay = Delay(self.w_settings.TL_falling_leaves_attack_period)
         self.ceiling_shake_delay = Delay(self.w_settings.TL_ceiling_shake_period)
         self.cur_delay = None  # Only used for the attack delays
+        self.vines_to_create = 0
 
         # Set up delays for determining Twisted Lumbers image
         self.leaf_dart_part1_delay = Delay(self.w_settings.TL_leaf_dart_part1_period)
 
         # Set up other delays
-        self.create_vine_delay = Delay(self.w_settings.TL_create_vine_period)
         self.create_falling_leaf_delay = Delay(self.w_settings.TL_create_falling_leaf_period)
 
         # States
@@ -180,7 +180,7 @@ class TwistedLumber(Character):
     def update_attacks(self, cur_time, leaves):
         # Part 1 of falling leaves attack
         if self.creating_vines:
-            self.create_vine(cur_time)
+            self.create_vine()
 
         # Part 2 of falling leaves attack
         if self.rising_by_vines:
@@ -254,11 +254,10 @@ class TwistedLumber(Character):
 
     def falling_leaves_attack(self, cur_time):
         self.creating_vines = True
-        self.create_vine_delay.reset()
 
-    def create_vine(self, cur_time):
-        if not self.create_vine_delay.is_active(cur_time):
-            self.create_vine_delay.reset()
+    def create_vine(self):
+        self.vines_to_create += self.w_settings.TL_create_vine_period / self.time_passed
+        while self.vines_to_create >= 1:
             if self.newest_vine is None:
                 self.newest_vine = Vine(self.w_settings,
                                         int(self.rect.centerx - self.w_settings.TL_vine_width / 2),
@@ -267,8 +266,8 @@ class TwistedLumber(Character):
                 self.newest_vine = Vine(self.w_settings,
                                         self.newest_vine.rect.x,
                                         self.newest_vine.rect.top - self.w_settings.TL_vine_height)
-            self.create_vine_delay.begin(cur_time)
-        self.vines.add(self.newest_vine)
+            self.vines.add(self.newest_vine)
+            self.vines_to_create -= 1
 
     # Helper function to check if our general delay variables are active
     def cur_delay_is_active(self, cur_time):

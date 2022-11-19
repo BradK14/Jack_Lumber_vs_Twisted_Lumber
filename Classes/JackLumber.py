@@ -68,7 +68,7 @@ class JackLumber(Character):
 
         # Set up various delays
         self.damage_reaction_delay = Delay(self.w_settings.JL_damage_reaction_period)
-        self.damaged_invinc_delay = Delay(self.w_settings.JL_damaged_invinc_period)  # Not currently used
+        self.damaged_invinc_delay = Delay(self.w_settings.JL_damaged_invinc_period)
         self.dash_stage_1_delay = Delay(self.w_settings.JL_dash_stage_1_period)
         self.dash_stage_2_delay = Delay(self.w_settings.JL_dash_stage_2_period)
         self.dashing_delay = Delay(self.w_settings.JL_dashing_period)
@@ -175,6 +175,10 @@ class JackLumber(Character):
             self.melee = None
             self.melee_life_delay.reset()
 
+        # Invincibility from damage removed when done
+        if not self.damaged_invinc_delay.is_active(self.cur_time):
+            self.invincible = False
+
         # Melee and Ranged attacks
         if (self.melee_pressed or self.ranged_pressed) and not self.being_damaged:
             # Allow regular movement
@@ -190,6 +194,7 @@ class JackLumber(Character):
                 self.dashing = False
                 self.grounded_dashing = False
                 self.air_dashing = True
+                self.dash_invinc = False
             # Check if we are able to attack
             if not self.attack_delay_is_active():
                 self.reset_attack_delay()
@@ -214,11 +219,15 @@ class JackLumber(Character):
 
         # if we are in a state of delay from either being damaged, dash_stage_1, dash_stage_2, or dashing
         elif self.cur_delay_is_active():
+            # Do nothing when being damaged
+            if self.being_damaged:
+                pass
             # Cancel delay if in dash stage 1 or 2 and we release the dash button
-            if (self.dash_stage_1 or self.dash_stage_2) and not self.dash_pressed:
+            elif (self.dash_stage_1 or self.dash_stage_2) and not self.dash_pressed:
                 self.reset_cur_delay()
                 self.dash_stage_1 = False
                 self.dash_stage_2 = False
+                self.grounded_dashing = False
             # Cancel delay from dash stage 1 or 2 and immediately enter last stage of dash
             elif (self.dash_stage_1 or self.dash_stage_2) and\
                     (self.up_pressed or
@@ -287,13 +296,13 @@ class JackLumber(Character):
                         ((self.left_pressed and self.right_pressed) and (not self.up_pressed or not self.down_pressed)):
                     self.set_dashing_states()
                 else:
+                    self.reset_cur_delay()
                     self.cur_delay = self.dash_stage_1_delay
                     self.cur_delay.begin(self.cur_time)
                     self.dash_stage_1 = True
                     self.moving_x = False
             else:  # Regular movement allowed, and attacks are allowed
                 self.set_regular_movement_states()
-                self.invincible = False
                 self.dash_invinc = False
                 self.being_damaged = False
 
@@ -491,7 +500,6 @@ class JackLumber(Character):
                     else:
                         self.health -= leaf.damage
                         self.being_damaged = True
-                        self.invincible = True
                         self.moving_x = False
                         self.dashing_x = False
                         self.dashing_up = False
@@ -504,6 +512,9 @@ class JackLumber(Character):
                             self.facing_left = False
                         else:
                             self.facing_left = True
+                        self.invincible = True
+                        self.damaged_invinc_delay.reset()
+                        self.damaged_invinc_delay.begin(self.cur_time)
                         self.reset_cur_delay()
                         self.cur_delay = self.damage_reaction_delay
                         self.cur_delay.begin(self.cur_time)

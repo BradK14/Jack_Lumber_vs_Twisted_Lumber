@@ -56,7 +56,8 @@ class Character(Sprite):
                     touched_top_surface = True
                     self.on_top_of_surface(surface)
                 # Below a surface
-                elif surface.rect.bottom > self.rect.top and self.y_velocity * -1 >= surface.rect.bottom - self.rect.top:
+                # elif surface.rect.bottom > self.rect.top and self.y_velocity * -1 >= surface.rect.bottom - self.rect.top:
+                elif self.previous_position[1] >= surface.rect.bottom:
                     self.below_surface(surface)
                 # Left of a surface
                 elif self.rect.right - surface.rect.left < surface.rect.right - self.rect.left:

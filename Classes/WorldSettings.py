@@ -107,7 +107,7 @@ class WorldSettings(object):
         self.TL_slow_leaf_period = int(self.TL_leaf_spiral_period / 2)
         self.TL_falling_leaves_attack_period = self.TL_leaf_spiral_period
         self.TL_ceiling_shake_period = 3000
-        self.TL_create_vine_period = 1  # Every Frame
+        self.TL_create_vine_period = self.fps_t  # Every Frame
         self.TL_create_falling_leaf_period = 100
 
         """ Load non-animated images """
@@ -324,10 +324,10 @@ class WorldSettings(object):
 
         """ Speeds of everything """
         # Positives will either move down or to the right, multiplying by -1 will change it to the left or up
-        self.fall_acceleration = 0.15625
+        self.fall_acceleration = 0.078125
 
         # Jack Lumber speeds
-        self.JL_init_jump_vel = -2.455357142857143  # Just enough to get him a little higher than his height
+        self.JL_init_jump_vel = -1.65  # Just enough to get him a little higher than his height
         self.JL_x_vel = 0.625
         self.JL_dash_vel = self.JL_x_vel * 2
         self.JL_damaged_x_vel = self.JL_x_vel
