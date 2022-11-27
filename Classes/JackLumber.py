@@ -181,20 +181,12 @@ class JackLumber(Character):
 
         # Melee and Ranged attacks
         if (self.melee_pressed or self.ranged_pressed) and not self.being_damaged:
+            # If dashing previously, cancel it and turn on air dash
+            if self.dashing:
+                self.y_velocity = 0
+                self.air_dashing = True
             # Allow regular movement
             self.set_regular_movement_states()
-            # If dashing previously, cancel it and turn on air dash
-            if self.cur_delay_is_active():
-                self.reset_cur_delay()
-                self.dashing_x = False
-                self.dashing_up = False
-                self.dashing_down = False
-                self.dash_stage_1 = False
-                self.dash_stage_2 = False
-                self.dashing = False
-                self.grounded_dashing = False
-                self.air_dashing = True
-                self.dash_invinc = False
             # Check if we are able to attack
             if not self.attack_delay_is_active():
                 self.reset_attack_delay()
@@ -303,7 +295,6 @@ class JackLumber(Character):
                     self.moving_x = False
             else:  # Regular movement allowed, and attacks are allowed
                 self.set_regular_movement_states()
-                self.dash_invinc = False
                 self.being_damaged = False
 
     # Helper functions to reset our delay variables to None
@@ -353,8 +344,17 @@ class JackLumber(Character):
             else:  # Right
                 self.facing_left = False
 
-    # determine states helper function for normal movement
+    # Determine states helper function for normal movement
     def set_regular_movement_states(self):
+        self.reset_cur_delay()
+        self.dashing_x = False
+        self.dashing_up = False
+        self.dashing_down = False
+        self.dash_stage_1 = False
+        self.dash_stage_2 = False
+        self.dashing = False
+        self.grounded_dashing = False
+        self.dash_invinc = False
         # Move left
         if self.left_pressed and not self.right_pressed:
             self.moving_x = True
