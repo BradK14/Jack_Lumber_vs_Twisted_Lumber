@@ -159,19 +159,19 @@ class TwistedLumber(Character):
 
                 # Choose an action at random
                 randchoice = randint(1, 100)
-                if randchoice <= 10:  # 10% chance to do nothing 10
+                if randchoice <= 5:  # 5% chance to do nothing 5
                     self.cur_delay = self.wait_delay
                     self.wait()
-                elif randchoice <= 35:  # 25% chance to jump towards Jack: 35
+                elif randchoice <= 15:  # 10% chance to jump towards Jack: 15
                     self.cur_delay = self.jump_delay
                     self.jump()
-                elif randchoice <= 65:  # 30% chance to fire a leaf towards Jack: 65
+                elif randchoice <= 55:  # 40% chance to fire a leaf towards Jack: 55
                     self.cur_delay = self.leaf_dart_delay
                     self.leaf_dart(cur_time, leaves)
-                elif randchoice <= 85:  # 20% chance to send out a spiral of leaves: 85
+                elif randchoice <= 90:  # 35% chance to send out a spiral of leaves: 90
                     self.cur_delay = self.leaf_spiral_delay
                     self.leaf_spiral(cur_time, leaves)
-                elif randchoice > 85:  # 15% chance to send out a vine to the ceiling to make leaves rain down
+                elif randchoice > 90:  # 10% chance to send out a vine to the ceiling to make leaves rain down
                     self.cur_delay = self.falling_leaves_attack_delay
                     self.falling_leaves_attack(cur_time)
 

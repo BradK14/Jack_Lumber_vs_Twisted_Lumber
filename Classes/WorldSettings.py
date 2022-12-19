@@ -103,7 +103,7 @@ class WorldSettings(object):
         self.TL_leaf_dart_period = 800
         self.TL_leaf_dart_part1_period = int(self.TL_leaf_dart_period * 2 / 3)
         self.TL_leaf_dart_wait_period = self.TL_leaf_dart_part1_period
-        self.TL_leaf_spiral_period = 1500
+        self.TL_leaf_spiral_period = 1200
         self.TL_slow_leaf_period = int(self.TL_leaf_spiral_period / 2)
         self.TL_falling_leaves_attack_period = self.TL_leaf_spiral_period
         self.TL_ceiling_shake_period = 3000

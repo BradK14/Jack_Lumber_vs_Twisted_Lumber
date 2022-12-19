@@ -202,6 +202,7 @@ def load_next_area(w_settings, in_start_area, jack, enemies, ranged_attacks, lea
         in_start_area = False
         boss = TwistedLumber(w_settings, 0, 0, True)
         enemies.add(boss)
+        ranged_attacks.empty()
         jack.__init__(w_settings, 0, 0, True)
         mg.load_map_vs_twisted_lumber(w_settings, jack, boss)
     else:  # If game over is True go back to the start screen
